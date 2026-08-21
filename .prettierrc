@@ -3,5 +3,8 @@
   "tabWidth": 2,
   "useTabs": false,
   "semi": true,
-  "singleQuote": true
+  "singleQuote": true,
+  "proseWrap": "always",
+  "embeddedLanguageFormatting": "auto",
+  "endOfLine": "lf"
 }
