@@ -1,6 +1,7 @@
 # Standard Compliance Scan
 
-Scan the current project and report where the codebase does not follow the repository standards in `/.bat-peasant/standard`.
+Scan the current project and report where the codebase does not follow the repository standards in
+`/.bat-peasant/standard`.
 
 ## Goal
 

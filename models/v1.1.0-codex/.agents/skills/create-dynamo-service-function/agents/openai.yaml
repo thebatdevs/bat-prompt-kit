@@ -1,4 +1,5 @@
 interface:
   display_name: 'Dynamo Service Functions'
   short_description: 'Create standardized DynamoDB service files'
-  default_prompt: 'Use $dynamo-service-functions with ##bat-peasant to create get, update, and create service files for an entity.'
+  default_prompt:
+    'Use $dynamo-service-functions with ##bat-peasant to create get, update, and create service files for an entity.'

@@ -11,7 +11,8 @@ User should provide one or more:
 - Current problem
 - Expected outcome
 
-Preserve current behavior unless the user explicitly approves behavior changes. Record unclear behavior as open questions.
+Preserve current behavior unless the user explicitly approves behavior changes. Record unclear behavior as open
+questions.
 
 ## Read First
 

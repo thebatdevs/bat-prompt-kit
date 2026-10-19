@@ -63,8 +63,7 @@ Exported functions MUST:
 - Avoid hidden side effects
 - Return validated domain objects when appropriate
 
-Use object parameters for multiple inputs.
-Do not use `any`; use `unknown` and narrow safely.
+Use object parameters for multiple inputs. Do not use `any`; use `unknown` and narrow safely.
 
 ## Validation
 
@@ -80,8 +79,8 @@ const input = inputSch.parse(rawInput);
 return resultSch.parse(result);
 ```
 
-Pure shape validation belongs in schemas.
-Repeated business validation, lookup, and guard logic MUST be extracted into reusable focused functions:
+Pure shape validation belongs in schemas. Repeated business validation, lookup, and guard logic MUST be extracted into
+reusable focused functions:
 
 ```ts
 const withdrawRequest = await getValidWithdrawRequestById(id);
@@ -119,12 +118,13 @@ try {
 
 Prefer fewer, well-placed try/catch blocks over wrapping every statement.
 
-**Avoid nested try/catch blocks.**
-If additional error handling is needed inside or after an existing try/catch, extract that logic into a separate independent function that owns its own try/catch.
+**Avoid nested try/catch blocks.** If additional error handling is needed inside or after an existing try/catch, extract
+that logic into a separate independent function that owns its own try/catch.
 
 ### Traceable Business Logging
 
-Any function that updates state, performs validation with side effects, or contains multiple meaningful steps MUST emit clear, traceable logs using the shared logger.
+Any function that updates state, performs validation with side effects, or contains multiple meaningful steps MUST emit
+clear, traceable logs using the shared logger.
 
 Log important intermediate states so the flow can be reconstructed later.
 

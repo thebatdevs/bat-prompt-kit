@@ -1,12 +1,15 @@
 # Bat-peasant workflow - `v1.1.0-codex`
 
-**Goal:** Make Codex (GPT-4o / o1 / etc.) code exactly like me — respecting my architecture, naming conventions, error handling style, layering, testing approach, and taste across TypeScript, Python, Java, and Go projects with my customized project structure
+**Goal:** Make Codex (GPT-4o / o1 / etc.) code exactly like me — respecting my architecture, naming conventions, error
+handling style, layering, testing approach, and taste across TypeScript, Python, Java, and Go projects with my
+customized project structure
 
 ## Core principle
 
 > Context-first, plan-when-complex, Execute-precisely
 
-I will maintain a single `.agents/` directory at the root of every major repository (or monorepo). This folder acts as the agent's persistent memory and personality.
+I will maintain a single `.agents/` directory at the root of every major repository (or monorepo). This folder acts as
+the agent's persistent memory and personality.
 
 ## Directory structure
 
@@ -64,7 +67,8 @@ AGENTS.md                         # Main agent documentation & index
 ## Core workflow
 
 1. Task intake
-   - I enter a task description, and if it contains ##bat-peasant, the agent will follow the workflow below. Otherwise, it will use its default behavior.
+   - I enter a task description, and if it contains ##bat-peasant, the agent will follow the workflow below. Otherwise,
+     it will use its default behavior.
    - For small tasks (single function, small utility, bug fix in one file): Direct execution.
    - For anything that touches multiple files, changes architecture, or adds features: Mandatory planning phase.
 2. Planning phase (When needed)
@@ -77,7 +81,8 @@ AGENTS.md                         # Main agent documentation & index
 3. Execution
    - Codex executes exactly the approved plan.
    - It must heavily reference .agents/rules/, .agents/examples/, and .agents/context/.
-   - After major changes, it should summarize what was done and suggest follow-up tasks (e.g., "Write tests in separate thread").
+   - After major changes, it should summarize what was done and suggest follow-up tasks (e.g., "Write tests in separate
+     thread").
 4. Review
    - Testing is almost always done in a separate ChatGPT thread to keep context clean.
    - PR review uses the dedicated review/pull-request.md prompt + full .agents/ context.

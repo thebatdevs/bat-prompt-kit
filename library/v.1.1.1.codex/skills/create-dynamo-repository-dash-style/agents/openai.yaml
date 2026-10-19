@@ -1,4 +1,5 @@
 interface:
-  display_name: "Create Dynamo Repository Dash Style"
-  short_description: "Scaffold a Dash-style DynamoDB repository"
-  default_prompt: "Use $create-dynamo-repository-dash-style to add a Dash-style DynamoDB repository for my provided item type."
+  display_name: 'Create Dynamo Repository Dash Style'
+  short_description: 'Scaffold a Dash-style DynamoDB repository'
+  default_prompt:
+    'Use $create-dynamo-repository-dash-style to add a Dash-style DynamoDB repository for my provided item type.'

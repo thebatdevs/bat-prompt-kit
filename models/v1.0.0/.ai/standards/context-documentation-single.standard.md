@@ -1,6 +1,7 @@
 # Mono-Project Business Logic Context Standard
 
-Purpose: document only the business logic needed for AI agents to safely modify a mono-project without loading the full repository.
+Purpose: document only the business logic needed for AI agents to safely modify a mono-project without loading the full
+repository.
 
 ## File Rule
 
@@ -100,9 +101,7 @@ Pattern: Function -> Handler -> Service -> Repository -> Storage/External API
 
 ### `<flow name>`
 
-Entry: `<api/function/handler>`
-Service: `<main service function>`
-Repositories: `<important repository functions>`
+Entry: `<api/function/handler>` Service: `<main service function>` Repositories: `<important repository functions>`
 
 Steps:
 
@@ -172,9 +171,8 @@ Pattern: Function -> Handler -> Service -> Repository -> Storage/External API
 
 ### Create withdraw request
 
-Entry: `POST /withdraw`
-Service: `createWithdrawRequest`
-Repositories: `createWithdrawRequest`, `getCustomConfigByKey`, `getUserPaymentAddressById`
+Entry: `POST /withdraw` Service: `createWithdrawRequest` Repositories: `createWithdrawRequest`, `getCustomConfigByKey`,
+`getUserPaymentAddressById`
 
 Steps:
 

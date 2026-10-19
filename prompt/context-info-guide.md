@@ -12,5 +12,4 @@ Return:
 6. Are you relying on exact context, summarized context, or assumptions?
 7. Should I continue this thread or start a new one?
 
-Be honest. If you cannot see something, say "not available in current context".
-Do not guess.
+Be honest. If you cannot see something, say "not available in current context". Do not guess.

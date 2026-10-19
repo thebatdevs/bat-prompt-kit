@@ -1,6 +1,7 @@
 # PROJECT NAME: Technology Stack
 
-> Authoring template only. Replace every placeholder, remove this notice, and rename the file to `<profile-id>.tech-stack.md`. This template contains no repository facts.
+> Authoring template only. Replace every placeholder, remove this notice, and rename the file to
+> `<profile-id>.tech-stack.md`. This template contains no repository facts.
 
 ## Profile
 
@@ -25,7 +26,8 @@ REPLACE WITH IMPORTANT LIBRARIES AND THEIR REPOSITORY-SPECIFIC ROLES. LINK TO `.
 
 ## Tooling
 
-REPLACE WITH PACKAGE OR DEPENDENCY MANAGEMENT, BUILD, TEST, LINT, FORMAT, CODE GENERATION, AND LOCAL-DEVELOPMENT TOOLING.
+REPLACE WITH PACKAGE OR DEPENDENCY MANAGEMENT, BUILD, TEST, LINT, FORMAT, CODE GENERATION, AND LOCAL-DEVELOPMENT
+TOOLING.
 
 ## Version and Configuration Sources
 

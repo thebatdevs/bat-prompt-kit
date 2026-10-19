@@ -1,6 +1,7 @@
 # Tech Stack Standard
 
-Purpose: define the strict, minimal TypeScript AWS serverless stack for this project. Agents must not introduce new technologies without explicit approval.
+Purpose: define the strict, minimal TypeScript AWS serverless stack for this project. Agents must not introduce new
+technologies without explicit approval.
 
 ## Approved Core Stack
 

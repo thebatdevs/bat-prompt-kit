@@ -13,7 +13,8 @@ status: current
 
 # Context Template
 
-> Non-normative authoring scaffold. Replace every placeholder and validate the result against [`README.md`](README.md). This file contains no repository facts.
+> Non-normative authoring scaffold. Replace every placeholder and validate the result against [`README.md`](README.md).
+> This file contains no repository facts.
 
 ## Applies When
 

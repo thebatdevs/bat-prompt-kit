@@ -1,6 +1,7 @@
 # PROJECT NAME: Project Structure
 
-> Authoring template only. Replace every placeholder, remove this notice, and rename the file to `<profile-id>.project-structure.md`. This template contains no repository facts.
+> Authoring template only. Replace every placeholder, remove this notice, and rename the file to
+> `<profile-id>.project-structure.md`. This template contains no repository facts.
 
 ## Profile
 

@@ -2,7 +2,8 @@
 
 Type-safe builders for AWS SDK v3 DocumentClient command inputs.
 
-This package helps you build correct DynamoDB command payloads with less boilerplate, safer defaults, and consistent placeholder handling.
+This package helps you build correct DynamoDB command payloads with less boilerplate, safer defaults, and consistent
+placeholder handling.
 
 It is especially useful when you want to:
 
@@ -305,7 +306,8 @@ Example:
 
 - `size, name` can become `#size, #name`
 
-You can still provide additional `ExpressionAttributeNames`; user-provided aliases override generated ones when keys collide.
+You can still provide additional `ExpressionAttributeNames`; user-provided aliases override generated ones when keys
+collide.
 
 ## Errors and Validation
 
@@ -317,9 +319,12 @@ You can still provide additional `ExpressionAttributeNames`; user-provided alias
 
 ## Known Behavior Notes (Current Version)
 
-1. `buildScanCommandInput` currently works best with manual `filterExpression`; `filtersAttributes` should be treated as experimental in this version.
-2. `buildUpdateCommandInput` only auto-aliases reserved words when it generates expression from `item`; if you pass `updateExpression`, pass your aliases yourself.
-3. `buildQueryCommandInput` does not currently consume `keyConditionExpression` from custom input; key condition is generated from `queryRequest`.
+1. `buildScanCommandInput` currently works best with manual `filterExpression`; `filtersAttributes` should be treated as
+   experimental in this version.
+2. `buildUpdateCommandInput` only auto-aliases reserved words when it generates expression from `item`; if you pass
+   `updateExpression`, pass your aliases yourself.
+3. `buildQueryCommandInput` does not currently consume `keyConditionExpression` from custom input; key condition is
+   generated from `queryRequest`.
 
 ## Minimal End-to-End Pattern
 

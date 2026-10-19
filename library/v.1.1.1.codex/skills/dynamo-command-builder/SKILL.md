@@ -1,6 +1,8 @@
 ---
 name: dynamo-command-builder
-description: Use when implementing, reviewing, refactoring, or debugging AWS SDK v3 DynamoDB DocumentClient Get, Put, Query, Scan, or Update operations in a project that uses the dynamo-command-builder package.
+description:
+  Use when implementing, reviewing, refactoring, or debugging AWS SDK v3 DynamoDB DocumentClient Get, Put, Query, Scan,
+  or Update operations in a project that uses the dynamo-command-builder package.
 ---
 
 # Dynamo Command Builder
@@ -248,7 +250,8 @@ Output:
 }
 ```
 
-Do not modify the key structure. Application-level serialization such as base64 is acceptable only when explicitly implemented outside this package.
+Do not modify the key structure. Application-level serialization such as base64 is acceptable only when explicitly
+implemented outside this package.
 
 ## Error handling
 

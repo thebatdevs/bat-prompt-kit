@@ -1,4 +1,5 @@
 interface:
-  display_name: "Create Dynamo Client Dash Style"
-  short_description: "Scaffold a Dash-style DynamoDB client"
-  default_prompt: "Use $create-dynamo-client-dash-style to add a Dash-style dynamo-client.ts to this TypeScript project."
+  display_name: 'Create Dynamo Client Dash Style'
+  short_description: 'Scaffold a Dash-style DynamoDB client'
+  default_prompt:
+    'Use $create-dynamo-client-dash-style to add a Dash-style dynamo-client.ts to this TypeScript project.'

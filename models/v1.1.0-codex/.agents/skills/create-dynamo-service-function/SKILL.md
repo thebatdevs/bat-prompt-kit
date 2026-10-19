@@ -3,10 +3,10 @@ name: create-dynamo-service-function
 description: Use when Codes needs to create a dynamo service functions
 ---
 
----
+***
 
-name: dynamo-service-functions
-description: Creates standardized DynamoDB service functions for a Bat-Peasant TypeScript project.
+name: dynamo-service-functions description: Creates standardized DynamoDB service functions for a Bat-Peasant TypeScript
+project.
 
 ---
 
@@ -103,7 +103,8 @@ Before generating the service files:
    - `logErrorMessage`
    - `DynamoQueryRequest`
 
-Do not assume that every entity uses `id` as its primary key. Adapt function parameters and validation to the repository contract when necessary.
+Do not assume that every entity uses `id` as its primary key. Adapt function parameters and validation to the repository
+contract when necessary.
 
 ## Get File
 

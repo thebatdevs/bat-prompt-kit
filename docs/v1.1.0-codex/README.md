@@ -24,7 +24,8 @@ List only the `.agents/` files relevant to the task.
 
 ## `.agents/` Knowledge Base
 
-The `.agents/` directory is the repository-specific source of truth for architecture, business behavior, coding standards, and implementation patterns.
+The `.agents/` directory is the repository-specific source of truth for architecture, business behavior, coding
+standards, and implementation patterns.
 
 ```text
 .agents/
@@ -53,9 +54,12 @@ Do not load every file automatically. Inspect the directory and read only the fi
 
 ## Instruction Priority
 
-The canonical precedence, applicability test, repository-override rules, and conflict algorithm are defined in [`.agents/info.md`](.agents/info.md#instruction-priority).
+The canonical precedence, applicability test, repository-override rules, and conflict algorithm are defined in
+[`.agents/info.md`](.agents/info.md#instruction-priority).
 
-In summary, explicit task requirements and an approved plan lead applicable project sources. Source applicability is established before priority is compared, and unresolved material conflicts are reported instead of guessed. Loading order is a discovery optimization and does not change precedence.
+In summary, explicit task requirements and an approved plan lead applicable project sources. Source applicability is
+established before priority is compared, and unresolved material conflicts are reported instead of guessed. Loading
+order is a discovery optimization and does not change precedence.
 
 ## Workflow
 
@@ -72,7 +76,8 @@ Do not modify files outside the requested scope without a clear reason.
 
 ### 2. Context Loading
 
-Use the selective [context-loading sequence](.agents/info.md#2-context-loading) in `.agents/info.md`. Load only enough context to execute the task correctly; discovery order does not alter instruction precedence.
+Use the selective [context-loading sequence](.agents/info.md#2-context-loading) in `.agents/info.md`. Load only enough
+context to execute the task correctly; discovery order does not alter instruction precedence.
 
 ### 3. Task Classification
 

@@ -1,6 +1,7 @@
 # Project structure standards example
 
-This project follows a layered architecture designed to keep business logic isolated, testable, and reusable across different entry points such as API handlers, scheduled jobs, queue consumers, and scripts.
+This project follows a layered architecture designed to keep business logic isolated, testable, and reusable across
+different entry points such as API handlers, scheduled jobs, queue consumers, and scripts.
 
 ## Core Architecture
 

@@ -2,13 +2,17 @@
 
 > `bat-peasant` is a personalized coding-agent memory system packaged as a reusable project template.
 
-The goal of this project is to help AI coding agents understand a repository before they modify it. Instead of acting like a generic AI coding tool, `bat-peasant` gives the agent structured access to project context, engineering standards, workflow rules, implementation examples, technical decisions, and maintenance guides.
+The goal of this project is to help AI coding agents understand a repository before they modify it. Instead of acting
+like a generic AI coding tool, `bat-peasant` gives the agent structured access to project context, engineering
+standards, workflow rules, implementation examples, technical decisions, and maintenance guides.
 
-`bat-peasant` is designed to be language-agnostic. It can be used for TypeScript, Python, or any other codebase as long as the repository-specific rules are documented inside the `code/.bat-peasant/` folder.
+`bat-peasant` is designed to be language-agnostic. It can be used for TypeScript, Python, or any other codebase as long
+as the repository-specific rules are documented inside the `code/.bat-peasant/` folder.
 
 ## Purpose
 
-The main purpose of `bat-peasant` is to improve development speed, consistency, and reliability by giving an AI agent a clear memory structure for each repository.
+The main purpose of `bat-peasant` is to improve development speed, consistency, and reliability by giving an AI agent a
+clear memory structure for each repository.
 
 It should help with tasks such as:
 
@@ -30,7 +34,8 @@ Instead, it separates agent memory into focused files and folders.
 
 The `code/AGENTS.md` file acts as the entrypoint. It tells the agent how to use the `code/.bat-peasant/` folder.
 
-The `code/.bat-peasant/workflow/` files define task-specific execution flows. Each workflow file is responsible for listing which context, standards, examples, docs, prompts, and decisions should be read for that task.
+The `code/.bat-peasant/workflow/` files define task-specific execution flows. Each workflow file is responsible for
+listing which context, standards, examples, docs, prompts, and decisions should be read for that task.
 
 ## Folder Structure
 
@@ -249,7 +254,8 @@ The `code/.bat-peasant` folder should describe the current repository, not an id
 
 ## Goal
 
-The long-term goal of `bat-peasant` is to make coding agents more useful by giving them a reliable, repository-aware memory system.
+The long-term goal of `bat-peasant` is to make coding agents more useful by giving them a reliable, repository-aware
+memory system.
 
 A good `bat-peasant` setup should help an agent answer:
 
@@ -261,4 +267,5 @@ A good `bat-peasant` setup should help an agent answer:
 - What decisions should I respect?
 - What files should I update if the system behavior changes?
 
-When maintained properly, `bat-peasant` should make AI-assisted development faster, safer, and more consistent across different codebases.
+When maintained properly, `bat-peasant` should make AI-assisted development faster, safer, and more consistent across
+different codebases.

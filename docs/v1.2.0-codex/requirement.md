@@ -1,6 +1,7 @@
 # `bat-prompt-kit v1.1.1-codex`
 
-`bat-prompt-kit` is a bundle of markdowns that help coding agents to makes specification into executable standardized, maintainable code.
+`bat-prompt-kit` is a bundle of markdowns that help coding agents to makes specification into executable standardized,
+maintainable code.
 
 ## General workflow
 

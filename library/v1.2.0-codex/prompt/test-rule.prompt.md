@@ -5,7 +5,9 @@ You are creating reusable testing rule templates for the `bat-prompt-kit` tool u
 
 ### Goal
 
-Produce a single, consistent, machine-readable testing rule structure that works for ANY testing library (Vitest, Jest, Playwright, Cypress, Mocha, etc.). The structure must be identical across libraries so the agent always generates persistent, predictable output.
+Produce a single, consistent, machine-readable testing rule structure that works for ANY testing library (Vitest, Jest,
+Playwright, Cypress, Mocha, etc.). The structure must be identical across libraries so the agent always generates
+persistent, predictable output.
 
 ### Process
 
@@ -52,8 +54,8 @@ Produce a single, consistent, machine-readable testing rule structure that works
    - What the agent must never do
    - How the agent should respond when the user asks to “add tests” or “write tests for X”
 
-8. **Output Format (strict)**
-   The final rule must be emitted as a single Markdown block with the exact heading hierarchy above so it can be saved and reused consistently.
+8. **Output Format (strict)** The final rule must be emitted as a single Markdown block with the exact heading hierarchy
+   above so it can be saved and reused consistently.
 
 ### Constraints
 
@@ -62,5 +64,6 @@ Produce a single, consistent, machine-readable testing rule structure that works
 - Prefer concise, actionable, copy-pasteable guidance over long explanations.
 - Assume a modern TypeScript/JavaScript project unless specified otherwise.
 
-Start by outputting the generic Testing Rule Template, then immediately produce the filled-in Vitest version using that template.
+Start by outputting the generic Testing Rule Template, then immediately produce the filled-in Vitest version using that
+template.
 ```

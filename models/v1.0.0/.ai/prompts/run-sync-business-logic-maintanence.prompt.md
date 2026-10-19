@@ -2,7 +2,8 @@
 
 Run `.ai/maintenance/sync-business-logic.md` exactly.
 
-Read the sync file, then read the correct standard from `.ai/standards/` based on repo shape. Scan the project, identify business scopes, and create/update the required `.ai/context/*.business-logic.md` files.
+Read the sync file, then read the correct standard from `.ai/standards/` based on repo shape. Scan the project, identify
+business scopes, and create/update the required `.ai/context/*.business-logic.md` files.
 
 Rules:
 

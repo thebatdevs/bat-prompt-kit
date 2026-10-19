@@ -1,18 +1,28 @@
 ---
 name: create-dynamo-client-dash-style
-description: Use when Codex needs to add or recreate a Dash-style TypeScript DynamoDB helper module named dynamo-client.ts using @aws-sdk/client-dynamodb, @aws-sdk/lib-dynamodb, and dynamo-command-builder. Apply when the user asks to create a DynamoDB client, Dynamo client wrapper, dynamo-client.ts, or shared DynamoDB CRUD/query helper in a TypeScript repository or package, including monorepos.
+description:
+  Use when Codex needs to add or recreate a Dash-style TypeScript DynamoDB helper module named dynamo-client.ts using
+  @aws-sdk/client-dynamodb, @aws-sdk/lib-dynamodb, and dynamo-command-builder. Apply when the user asks to create a
+  DynamoDB client, Dynamo client wrapper, dynamo-client.ts, or shared DynamoDB CRUD/query helper in a TypeScript
+  repository or package, including monorepos.
 ---
 
 # Create Dynamo Client Dash Style
 
-Create a `dynamo-client.ts` file in the appropriate TypeScript package after confirming the project shape and required dependencies.
+Create a `dynamo-client.ts` file in the appropriate TypeScript package after confirming the project shape and required
+dependencies.
 
 ## Workflow
 
 1. Inspect the repository root:
-   - Use `rg --files -g 'package.json' -g 'tsconfig*.json' -g 'pnpm-workspace.yaml' -g 'lerna.json' -g 'nx.json' -g 'turbo.json' -g 'rush.json'`.
-   - Treat the repo as a monorepo when it has workspace config (`workspaces`, `pnpm-workspace.yaml`, `lerna.json`, `nx.json`, `turbo.json`, `rush.json`) or multiple package-level `package.json` files under common folders such as `apps/`, `packages/`, `services/`, or `libs/`.
-   - If there is one obvious TypeScript package, use it. If multiple packages could own the Dynamo client and the user did not specify one, choose the package that already contains AWS, DynamoDB, database, repository, or service-layer code. Ask only when ownership is genuinely ambiguous.
+   - Use
+     `rg --files -g 'package.json' -g 'tsconfig*.json' -g 'pnpm-workspace.yaml' -g 'lerna.json' -g 'nx.json' -g 'turbo.json' -g 'rush.json'`.
+   - Treat the repo as a monorepo when it has workspace config (`workspaces`, `pnpm-workspace.yaml`, `lerna.json`,
+     `nx.json`, `turbo.json`, `rush.json`) or multiple package-level `package.json` files under common folders such as
+     `apps/`, `packages/`, `services/`, or `libs/`.
+   - If there is one obvious TypeScript package, use it. If multiple packages could own the Dynamo client and the user
+     did not specify one, choose the package that already contains AWS, DynamoDB, database, repository, or service-layer
+     code. Ask only when ownership is genuinely ambiguous.
 
 2. Confirm TypeScript and dependency state in the target package:
    - Verify `typescript` is available through the package or root toolchain when the project is TypeScript.
@@ -21,18 +31,25 @@ Create a `dynamo-client.ts` file in the appropriate TypeScript package after con
      - `@aws-sdk/lib-dynamodb`
      - `dynamo-command-builder`
    - Check `package.json` files directly. Use the repo package manager if installation is needed:
-     - `pnpm add @aws-sdk/client-dynamodb @aws-sdk/lib-dynamodb dynamo-command-builder --filter <package>` for pnpm workspaces.
-     - `npm install @aws-sdk/client-dynamodb @aws-sdk/lib-dynamodb dynamo-command-builder -w <workspace>` for npm workspaces.
-     - `yarn workspace <package> add @aws-sdk/client-dynamodb @aws-sdk/lib-dynamodb dynamo-command-builder` for Yarn workspaces.
+     - `pnpm add @aws-sdk/client-dynamodb @aws-sdk/lib-dynamodb dynamo-command-builder --filter <package>` for pnpm
+       workspaces.
+     - `npm install @aws-sdk/client-dynamodb @aws-sdk/lib-dynamodb dynamo-command-builder -w <workspace>` for npm
+       workspaces.
+     - `yarn workspace <package> add @aws-sdk/client-dynamodb @aws-sdk/lib-dynamodb dynamo-command-builder` for Yarn
+       workspaces.
      - Use the package directory without workspace flags for a non-monorepo.
-   - Do not edit dependency manifests by hand unless the repo already manages dependencies that way or install commands are unavailable.
+   - Do not edit dependency manifests by hand unless the repo already manages dependencies that way or install commands
+     are unavailable.
 
 3. Choose the destination:
-   - Prefer an existing shared utility or infrastructure folder in the target package, such as `src/lib/`, `src/libs/`, `src/utils/`, `src/infrastructure/`, `src/aws/`, or `src/clients/`.
+   - Prefer an existing shared utility or infrastructure folder in the target package, such as `src/lib/`, `src/libs/`,
+     `src/utils/`, `src/infrastructure/`, `src/aws/`, or `src/clients/`.
    - If no convention exists, create `src/lib/dynamo-client.ts` in the target package.
-   - Preserve existing path aliases and export-barrel patterns if present. Add a barrel export only when the package already uses one for similar modules.
+   - Preserve existing path aliases and export-barrel patterns if present. Add a barrel export only when the package
+     already uses one for similar modules.
 
-4. Create or update `dynamo-client.ts` with the Dash-style implementation below. Preserve local formatter conventions, but do not alter behavior without a clear project-specific reason.
+4. Create or update `dynamo-client.ts` with the Dash-style implementation below. Preserve local formatter conventions,
+   but do not alter behavior without a clear project-specific reason.
 
 ```ts
 import { DescribeTableCommand, DescribeTableCommandOutput, DynamoDBClient } from '@aws-sdk/client-dynamodb';
@@ -131,5 +148,6 @@ export async function updateRecordOnDynamo(input: CustomUpdateCommandInput) {
 ## Validation
 
 - Run the target package's existing typecheck, lint, or focused test command when available.
-- If no script exists, run the smallest viable TypeScript validation, such as `npx tsc --noEmit` from the target package or workspace command equivalent.
+- If no script exists, run the smallest viable TypeScript validation, such as `npx tsc --noEmit` from the target package
+  or workspace command equivalent.
 - Report the created file path, dependency action taken, and validation result.

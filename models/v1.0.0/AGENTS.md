@@ -1,6 +1,8 @@
 # AGENTS.md
 
-Purpose: Baseline entrypoint for AI coding agents. This repo may include `.bat-peasant/` as project memory. Use `.bat-peasant/` when the prompt contains `#BAT`, when the user asks for memory/workflows/standards/docs, or when extra context materially improves correctness.
+Purpose: Baseline entrypoint for AI coding agents. This repo may include `.bat-peasant/` as project memory. Use
+`.bat-peasant/` when the prompt contains `#BAT`, when the user asks for memory/workflows/standards/docs, or when extra
+context materially improves correctness.
 
 ## Core Rule
 
@@ -9,12 +11,15 @@ Before changing code:
 1. Identify task type.
 2. Check nearby code first.
 3. If prompt includes `#BAT`, use `.bat-peasant/`.
-4. Otherwise, use `.bat-peasant/` only when the task is broad, risky, unfamiliar, changes behavior, or nearby code is insufficient.
-5. When using `.bat-peasant/`, start with the closest `.bat-peasant/workflow/*.workflow.md` and read files referenced by that workflow.
+4. Otherwise, use `.bat-peasant/` only when the task is broad, risky, unfamiliar, changes behavior, or nearby code is
+   insufficient.
+5. When using `.bat-peasant/`, start with the closest `.bat-peasant/workflow/*.workflow.md` and read files referenced by
+   that workflow.
 6. Follow existing patterns and make the smallest correct change.
 7. Update `.bat-peasant/` memory only when the change affects future agent behavior.
 
-Actual repository code is the source of truth. `.bat-peasant/` guides implementation but must be checked against current code.
+Actual repository code is the source of truth. `.bat-peasant/` guides implementation but must be checked against current
+code.
 
 ## Task Routing
 
@@ -101,7 +106,8 @@ Testing behavior          -> testing/
 Workflow process          -> workflow/
 ```
 
-Memory updates must reflect the current repository state. Update only the smallest relevant section; do not rewrite unrelated memory files.
+Memory updates must reflect the current repository state. Update only the smallest relevant section; do not rewrite
+unrelated memory files.
 
 ## Final Response Format
 

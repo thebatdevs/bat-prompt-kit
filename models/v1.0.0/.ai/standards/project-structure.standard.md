@@ -10,7 +10,8 @@ Organize code by layer and business domain.
 Entry -> Service/Domain -> Repository/Data -> Storage/External API
 ```
 
-Follow the existing project convention first. Do not restructure a project just because this file uses different folder names.
+Follow the existing project convention first. Do not restructure a project just because this file uses different folder
+names.
 
 ## Standard Layers
 
