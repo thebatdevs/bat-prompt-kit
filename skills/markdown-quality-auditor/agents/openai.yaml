@@ -1,0 +1,3 @@
+interface:
+  display_name: 'Markdown Quality Auditor'
+  short_description: 'Audit Markdown quality for AI coding agents'
