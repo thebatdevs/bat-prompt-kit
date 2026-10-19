@@ -1,7 +1,11 @@
 # [Project] — Engineering Standard
 
-> TEMPLATE: replace [placeholders] and remove unused sections before activation. Owner: [name/team] | Version:
-> [version] | Reviewed: [YYYY-MM-DD] Scope: [repository/applications/packages]
+> TEMPLATE: replace [placeholders] and remove unused sections before activation.
+
+- Owner: [name/team]
+- Version: [version]
+- Reviewed: [YYYY-MM-DD]
+- Scope: [repository/applications/packages]
 
 ## 1. Instructions for coding agents
 
@@ -14,7 +18,7 @@
 - Inspect actual configuration; flag contradictions with this standard instead of silently choosing or changing it.
 - Existing codebase: inspect affected implementations, callers, tests, and configuration. Preserve unrelated behavior;
   avoid spreading deprecated patterns.
-- Empty codebase: follow section 12. Use approved examples or a pinned starter rather than unrelated architecture.
+- Empty codebase: follow section 11. Use approved examples or a pinned starter rather than unrelated architecture.
 - Resolve minor reversible gaps using the nearest approved pattern and disclose assumptions.
 
 ## 2. Project and domain context
@@ -150,18 +154,7 @@ Delete unused database subsections. Select patterns rather than retaining altern
 - Infrastructure: [environment separation, least privilege, health checks]
 - Observability: [required metrics, alerts, audit events; N/A if unused]
 
-## 9. Frontend rules — if applicable
-
-- Components: [boundaries, naming, approved reference]
-- State: [local/server/global ownership; libraries]
-- Fetching/mutations: [client, cache keys, invalidation, errors]
-- UI states: [loading, empty, error, success; approved components]
-- Forms: [library; schema sharing; server validation]
-- Styling: [design system, tokens, responsive rules]
-- Accessibility/localization: [requirements; translations; date/number formats]
-- Rendering/performance: [server/client boundaries; relevant constraints]
-
-## 10. Testing and verification commands
+## 9. Testing and verification commands
 
 - Test observable behavior/contracts rather than private implementation details.
 - Unit coverage: [business rules, transformations, failure cases]
@@ -187,7 +180,7 @@ Delete unused database subsections. Select patterns rather than retaining altern
 
 Never claim a check passed unless it ran successfully. Report blocked checks.
 
-## 11. Approved examples: the engineer's coding fingerprint
+## 10. Approved examples: the engineer's coding fingerprint
 
 Provide reviewed examples consistent with this standard. Empty projects need inline examples or an accessible pinned
 starter. Unresolved links are not usable examples.
@@ -211,7 +204,7 @@ Reason: [project constraint or observable benefit]
 
 Label legacy examples explicitly. Reproduce decisions rather than unrelated business logic.
 
-## 12. Agent workflow and empty-project bootstrap
+## 11. Agent workflow and empty-project bootstrap
 
 ### Existing project
 
@@ -235,7 +228,7 @@ Label legacy examples explicitly. Reproduce decisions rather than unrelated busi
 6. Verify installation, relevant checks, and build; disclose unavailable prerequisites.
 7. Avoid unrequested infrastructure, unused layers, and speculative features.
 
-## 13. Completion, exceptions, and maintenance
+## 12. Completion, exceptions, and maintenance
 
 Complete means requested behavior works, applicable rules are followed, relevant checks pass or blockers are disclosed,
 and affected contracts/documentation are current.
