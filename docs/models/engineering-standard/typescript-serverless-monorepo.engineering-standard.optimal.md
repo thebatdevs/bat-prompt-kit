@@ -30,6 +30,10 @@ Maintain a short project profile linked from `AGENTS.md`, containing:
 - Authoritative configuration paths, actual workspace names, exact verification commands and prerequisites.
 - Approved feature/test references and documented exceptions with reason, owner, and review date.
 
+If no profile is linked, inspect relevant existing configuration and documentation. Do not invent missing facts.
+Continue work supported by verified context; clarify consequential gaps before dependent changes. Create or update the
+profile when adoption or context maintenance is in scope.
+
 Link existing authoritative files instead of duplicating their contents. Do not infer implemented behavior from plans or
 names. Request acceptance does not imply reservation, execution, or delivery unless explicitly guaranteed.
 
@@ -91,8 +95,9 @@ testable and identify environment values required before import.
 - MUST document exported application APIs, business services, and integration/workflow operations.
 - SHOULD briefly document private helpers with non-obvious constraints. Clear names/types suffice for obvious helpers
   and inline callbacks. Generated/vendor code and test-runner callbacks follow their owning conventions.
-- Full structure: responsibility sentence → numbered `Process flow:` for multi-step behavior → `@param` descriptions in
-  signature order → `@returns` with result/absence/effects → applicable `@throws` with conditions.
+- MUST use this structure for APIs covered by the documentation requirement above: responsibility sentence; numbered
+  `Process flow:` for multi-step behavior; `@param` descriptions in signature order; `@returns` with
+  result/absence/effects; and applicable `@throws` with conditions. Apply the exceptions below.
 - Explain units, ownership, idempotency, concurrency, and partial effects when relevant. Do not duplicate TypeScript
   types, invent failures, or repeat obvious implementation steps. A trivial void completion needs no redundant return
   description.
@@ -107,7 +112,7 @@ transport boundary owns error mapping/logging, so this service needs no catch.
  *
  * Process flow:
  * 1. Fetches the method and rejects a missing record.
- * 2. Validates the amount, currency, and required metadata.
+ * 2. Validates the amount and required metadata.
  * 3. Returns the validated method.
  *
  * @param request - Method ID, requested amount, and metadata.
