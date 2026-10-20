@@ -12,9 +12,9 @@ pnpm. DynamoDB guidance applies only when DynamoDB is used. Follow applicable in
 
 Before changing backend application code:
 
-1. Read [the engineering standard](docs/engineering/engineering-standard.md).
-2. Read [the project profile](docs/engineering/project-profile.md) for business rules, configuration paths, verification
-   commands, approved examples, and documented exceptions.
+1. Read [the engineering standard](.agents/engineering/engineering-standard.md).
+2. Read [the project profile](.agents/engineering/project-profile.md) for business rules, configuration paths,
+   verification commands, approved examples, and documented exceptions.
 3. Inspect the working tree and the affected implementation, callers, contracts, configuration, and tests. Preserve
    unrelated work.
 
