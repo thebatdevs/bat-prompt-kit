@@ -1,6 +1,8 @@
 # TypeScript Serverless Monorepo — Engineering Standard
 
-Version: 2.1.0
+Version: 2.2.0
+
+Updated: 2026-10-21
 
 Applies to backend TypeScript/Node.js monorepos using AWS Lambda, API Gateway, Serverless Framework, and pnpm. DynamoDB
 rules apply only when used. Existing repository configuration and documented exceptions determine actual versions,
@@ -64,6 +66,14 @@ For new projects, use `stacks/<stack>/src/{functions,services,repository}` and n
 package imports. Avoid cycles and cross-stack private imports. Reuse SDK clients where appropriate; keep initialization
 testable and identify environment values required before import.
 
+- MUST keep each source file within 250 lines, including imports, types, functions and exports. Split cohesive modules
+  when needed; do not compress code to meet the limit.
+- MUST group service functions by entity and operation, for example `services/<entity>/<entity>-get.ts` and
+  `<entity>-update.ts`. Related operations share a module while it remains within the limit; do not automatically create
+  one service file per endpoint.
+- MUST reuse the existing HTTP handler factories, request/query parsers, schema exports, DynamoDB utilities,
+  `CustomError`, `logErrorMessage`, naming helpers and environment accessors before adding equivalent functionality.
+
 ## 5. How to write functions
 
 - MUST give each function one responsibility and a clear input/output contract. Prefer named functions/exports,
@@ -77,12 +87,46 @@ testable and identify environment values required before import.
   concurrency.
 - MUST keep required environment validation outside business logic. Follow executable formatting configuration.
 
+### Retrieval naming and query flow
+
+- MUST use `get` for retrieval functions, not `list`. Use `get<Entity>ById`, `get<Entities>ByQuery` and
+  `get<Entity>TableDesc` for their respective service operations. Handler names follow the route contract, for example
+  `getConfigs`; alias a service import only when needed to avoid a name collision.
+- MUST parse collection query parameters with the existing `extractQueryReqFromParams` utility and verified index/key
+  defaults, then pass the resulting `DynamoQueryRequest` to the service. Do not replace this with a new incompatible
+  pagination format or reject the shared parser's supported parameters.
+- MUST define collection projection expressions explicitly in the handler and pass them through the service to the
+  repository's `projectionExpression`, following the reference below. Keep DynamoDB command construction in
+  repositories. Projection strings are server-defined, not arbitrary request fields.
+- MUST derive and validate the collection response schema from the canonical entity schema with `.pick()`, matching the
+  selected fields. Do not validate a projected row against the full entity schema or silently strip a selected field
+  absent from the response schema. Preserve cursor metadata; fetch details by ID for fields omitted from a list.
+
+Illustrative handler call; the surrounding handler owns authentication, permissions and query parsing:
+
+```ts
+return await getConfigsByQuery(
+  queries,
+  `id, eventName, minDefaultLevel, description, logoImageUrl, status, createdAt, pricePerEntryByMotpoints`,
+);
+```
+
+The corresponding service accepts `(query: DynamoQueryRequest, projection?: string)` and forwards both arguments. The
+repository passes the expression to the shared query utility. If it supplies a default projection, that default must
+match its collection response schema. Projection expressions reduce returned data; do not claim they reduce DynamoDB
+read-capacity consumption for the same items.
+
 ### Error handling
 
-- MUST catch only to translate at an owned boundary, recover, clean up, or log a terminal failure. Otherwise propagate.
-  Do not add catch-and-rethrow boilerplate or enforce a try/catch count per function.
-- MUST assign one diagnostic logging owner per failure flow, normally the transport/worker boundary. Recovery incidents
-  may be logged where handled; do not repeat the same failure at every layer. Business audit events are separate.
+- MUST wrap every business service function's operation in `try/catch (error: unknown)`, call the shared
+  `logErrorMessage(error, '<enclosingFunctionName>')` in the catch, and rethrow the same error with `throw error`. This
+  includes retrieval and table-description services. Do not replace the error, return a success fallback, or lose its
+  status/cause. This service-level logging convention was explicitly requested on 2026-10-21 and supersedes the earlier
+  single-logging-owner rule for services.
+- Other layers SHOULD catch only to translate at an owned boundary, recover, clean up, or log a terminal failure. Reuse
+  shared transport error formatting. Nested services, repositories and the HTTP wrapper may log the same error;
+  function-name context identifies the propagation path, but repeated entries do not represent distinct incidents.
+  Business audit events are separate.
 - MUST narrow `catch (error: unknown)`, preserve original errors when propagating, and preserve causes when translating.
 - MUST keep critical failures observable. Document any best-effort suppression and its recovery/delivery guarantees.
 - MUST await promises inside `try` when its catch must handle rejection. Use `finally` for necessary cleanup without
@@ -103,8 +147,8 @@ testable and identify environment values required before import.
   description.
 - MUST update comments when behavior changes; do not expand untouched functions solely for documentation uniformity.
 
-Illustrative service; types, repository, and validators are supplied by the adopting project. The caller's shared
-transport boundary owns error mapping/logging, so this service needs no catch.
+Illustrative service; types, repository, validators and `logErrorMessage` are supplied by the adopting project. The
+service records its function context and rethrows; the shared transport wrapper still owns HTTP error mapping.
 
 ```ts
 /**
@@ -121,12 +165,17 @@ transport boundary owns error mapping/logging, so this service needs no catch.
  * @throws {Error} If the method lookup fails.
  */
 export async function validateCreateRequest(request: CreateRequest): Promise<PaymentMethod> {
-  const method = await getPaymentMethodById(request.paymentMethodId);
-  if (!method) throw new CustomError('paymentMethodNotFound', 404);
+  try {
+    const method = await getPaymentMethodById(request.paymentMethodId);
+    if (!method) throw new CustomError('paymentMethodNotFound', 404);
 
-  validateAmountForPaymentMethod(request.amount, method);
-  validateMetadataForPaymentMethod(request.metadata, method);
-  return method;
+    validateAmountForPaymentMethod(request.amount, method);
+    validateMetadataForPaymentMethod(request.metadata, method);
+    return method;
+  } catch (error: unknown) {
+    logErrorMessage(error, 'validateCreateRequest');
+    throw error;
+  }
 }
 ```
 
@@ -139,6 +188,21 @@ export async function validateCreateRequest(request: CreateRequest): Promise<Pay
   scope.
 - MUST use typed expected failures and public-safe unexpected-error responses. Do not expose internal traces or secrets.
 - Services decide when missing data becomes a domain failure; repositories preserve their documented absence convention.
+
+### Create, update and default semantics
+
+- MUST derive editable request schemas from canonical stored schemas with `.pick()` or `.omit()` and infer types from
+  Zod. Keep IDs, creation audit fields and status server-owned unless the documented operation explicitly permits them.
+- MUST apply documented defaults on create and retain them when parsing older records that omit newly added fields.
+  Parsing a default does not backfill storage; document any separate migration requirement.
+- MUST preserve omitted fields on PATCH. Remove creation defaults before making defaulted fields optional, for example
+  `entitySch.shape.field.removeDefault().optional()`, so a partial edit does not reset stored values. Validate explicit
+  values; do not treat `null` as omission unless the canonical field is nullable. Document defaults applied by PUT.
+- MUST use separate request schemas for status routes and general edits. Status routes accept only their documented
+  inputs, select the target status from the route, enforce documented transition guards and optimistic locking, and
+  write only status and update audit fields. Do not let a generic patch bypass those routes.
+- MUST keep domain-specific names, values and validation rules in shared feature schemas and the feature specification,
+  not in this general standard. When they change, update affected requests, response projections, examples and docs.
 
 ## 7. Persistence and consistency
 
@@ -159,6 +223,19 @@ When using DynamoDB:
 - Preserve the cursor contract, fetch only needed pages, retry unprocessed batch items within bounds, and account for
   index consistency. Business expiry MUST NOT rely on eventual TTL deletion.
 
+### Administrative table descriptions
+
+When table-description APIs are requested for an administrative entity, follow the established admin-stack pattern:
+
+- Register `GET <entity-base-path>/table-desc` with the admin authorizer and applicable permission convention.
+- Keep handler → service → repository flow: handler `get<Entity>TableDesc`, service `get<Entity>TableDesc`, repository
+  `get<Entity>TableDescription`, shared `getTableDescFromDynamo`. Resolve the table name lazily through the existing
+  environment accessor, never from a caller-supplied table name.
+- Return the SDK response's `Table` metadata and throw `CustomError` when it is absent, using the documented HTTP status
+  (the current admin-lottery contract uses 502). Do not return fabricated metadata or create/alter tables.
+- Add scoped `dynamodb:DescribeTable` permission to the execution-role policy and keep the endpoint registry, permission
+  documentation and Postman collection consistent.
+
 ## 8. External effects, security, and operations
 
 - MUST authenticate at a trusted boundary and enforce resource ownership, tenant scope, and action permissions before
@@ -175,6 +252,24 @@ When using DynamoDB:
   responses where appropriate.
 - MUST select IAM, time budgets, resource limits, telemetry, alerts, and recovery ownership for the actual workload.
   Keep deployment separate from verification and specify the intended environment explicitly.
+
+### API examples, IAM and implementation scope
+
+- MUST update the stack's Postman collection when endpoints or request contracts change. Keep base URLs and tokens as
+  placeholders, provide schema-valid bodies, use the stack's actual authentication style, and document any automatic
+  capture of entity IDs and optimistic-lock versions. Never send requests merely to validate a collection.
+- When role JSON is requested, provide separate trust and permissions documents using repository naming/stage/region
+  conventions, documented account placeholders and scoped resources/actions. Distinguish runtime execution permissions
+  from deployment permissions; editing the files does not apply them to AWS.
+- MUST distinguish table infrastructure ownership from record creation. Grant/create only operations authorized by the
+  feature. For example, admin-lottery provisions lottery tables, but clients create prize records and admin updates must
+  not upsert missing prizes. IAM `UpdateItem` alone does not enforce record existence; use repository conditions.
+- MUST keep scaffolding honest: until persistence/business behavior is implemented, use an explicit typed failure such
+  as `CustomError(..., 501)`, not fabricated success. Do not describe planned draw/delivery/eligibility logic as working
+  merely because request validation and persistence exist.
+- Temporary authorization changes MUST be explicitly requested and documented as a scoped exception. The current
+  admin-lottery permission assertions are commented out at the user's request while Cognito authorizers remain enabled;
+  this is not a default for new stacks or permission changes elsewhere.
 
 ## 9. Verification
 
