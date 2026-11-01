@@ -1,0 +1,3 @@
+interface:
+  display_name: 'Update README Folder Structure'
+  short_description: 'Rewrite root README.md to match v1.1.0-codex folder structure'
