@@ -10,16 +10,21 @@
 
 ## 1. Summary
 
-Build configurable lottery events for MYMOT customers and backoffice staff. Customers can view eligible events and prizes, spend MOT Points to spin, receive one prize per attempt, and review previous wins. Staff can configure events and prizes, manage delivery, and resolve uncertain charges. The first event is Halloween 2026; its rules, odds, default prize, eligibility enforcement, and fulfillment dependencies must be confirmed before production activation.
+Build configurable lottery events for MYMOT customers and backoffice staff. Customers can view eligible events and
+prizes, spend MOT Points to spin, receive one prize per attempt, and review previous wins. Staff can configure events
+and prizes, manage delivery, and resolve uncertain charges. The first event is Halloween 2026; its rules, odds, default
+prize, eligibility enforcement, and fulfillment dependencies must be confirmed before production activation.
 
 ## 2. Requirements
 
 ### Functional requirements
 
-- Staff can create and update lottery events, prizes, eligibility rules, odds, stock, delivery methods, and activation windows.
+- Staff can create and update lottery events, prizes, eligibility rules, odds, stock, delivery methods, and activation
+  windows.
 - Customers see only active events and prizes for which they are eligible.
 - A spin uses one attempt, or `spinMultiplier` attempts when enabled, and charges `motpointsForPerSpin × attempts` once.
-- Every successful paid attempt produces exactly one prize. Unassigned probability resolves to an eligible default prize.
+- Every successful paid attempt produces exactly one prize. Unassigned probability resolves to an eligible default
+  prize.
 - Stock and attempt slots are reserved atomically before charging. A failed reservation must not charge the customer.
 - Daily and total limits apply per customer and event. The Halloween daily window resets at 00:00 UTC+8.
 - Concurrent spins cannot exceed limits or allocate the same finite-stock unit twice.
@@ -63,11 +68,15 @@ Build configurable lottery events for MYMOT customers and backoffice staff. Cust
 | Shared tables are changed incompatibly by one stack                                                | Medium     | High          | Shared Zod contracts, deployment order, contract tests, and backward-compatible migrations                                                       | Backend              | Medium        |
 | Launch date is close relative to unresolved dependencies                                           | High       | High          | Resolve blocking questions first; assign owners/dates; cut optional fulfillment modes from Halloween scope                                       | Engineering lead     | Medium        |
 
-High-impact risks block approval until they have named owners and due dates. Required mitigations appear in the delivery plan.
+High-impact risks block approval until they have named owners and due dates. Required mitigations appear in the delivery
+plan.
 
 ## 4. Current State
 
-The repository patterns referenced by the source plan include separate admin/client Serverless stacks, shared schemas, DynamoDB naming helpers, authorizers, Motpoints withdrawal, and notification Lambdas. The source code and linked files (`CLAUDE.md`, Halloween rules, and `lottery-diagrams.md`) were not supplied with this document, so repository-specific claims remain subject to code review.
+The repository patterns referenced by the source plan include separate admin/client Serverless stacks, shared schemas,
+DynamoDB naming helpers, authorizers, Motpoints withdrawal, and notification Lambdas. The source code and linked files
+(`CLAUDE.md`, Halloween rules, and `lottery-diagrams.md`) were not supplied with this document, so repository-specific
+claims remain subject to code review.
 
 No lottery stacks or tables are stated to exist yet. The Halloween event is the first planned event.
 
@@ -78,9 +87,11 @@ No lottery stacks or tables are stated to exist yet. The Halloween event is the 
 1. Client loads active events and eligible prizes.
 2. Spin service validates event state, customer eligibility, limits, and guaranteed default prize.
 3. Service calculates draws using integer basis points.
-4. One DynamoDB transaction reserves finite stock and creates one `RESERVED` row per attempt using deterministic daily-slot IDs.
+4. One DynamoDB transaction reserves finite stock and creates one `RESERVED` row per attempt using deterministic
+   daily-slot IDs.
 5. Service calls Motpoints withdrawal once with `lottery-spin:{spinId}` as the idempotency key.
-6. A definite success atomically moves all rows to `CHARGED`; a definite refusal releases stock and slots; an unknown result becomes `CHARGE_UNKNOWN`.
+6. A definite success atomically moves all rows to `CHARGED`; a definite refusal releases stock and slots; an unknown
+   result becomes `CHARGE_UNKNOWN`.
 7. Charged prizes are queued for delivery. Self-claim prizes move to `AWAITING_CLAIM`.
 8. Reconciliation detects stuck spins and deliveries and alerts operations.
 
@@ -113,7 +124,9 @@ No lottery stacks or tables are stated to exist yet. The Halloween event is the 
 - Editable draw.io source: Unknown — the source references `lottery-diagrams.md`, not an attached `.drawio` file.
 - Exported preview: Unknown — confirmation required.
 
-Required diagram flow: MYMOT → client API → lottery service → DynamoDB transaction → Motpoints; then lottery service → SQS FIFO → delivery consumer → reward provider/notification. Backoffice → admin API → shared lottery tables. EventBridge → reconciliation → shared tables/alerts.
+Required diagram flow: MYMOT → client API → lottery service → DynamoDB transaction → Motpoints; then lottery service →
+SQS FIFO → delivery consumer → reward provider/notification. Backoffice → admin API → shared lottery tables. EventBridge
+→ reconciliation → shared tables/alerts.
 
 ## 6. Data Design
 
@@ -139,7 +152,9 @@ Required diagram flow: MYMOT → client API → lottery service → DynamoDB tra
 | `{stage}-cfd-bonus-lottery-prizes`      | `lotteryPrizeId`     | Current: `status-distributionMode-index`; reassess event-centric key                                                                                        | Prize configuration and draw candidates                    |
 | `{stage}-cfd-bonus-lottery-user-prizes` | `userLotteryPrizeId` | `userLotteryKey-spunAt-index` (recommended), `lotteryId-spunAt-index`, `spinId-spunAt-index`, `spinStatus-spunAt-index`, `prizeDeliveryStatus-spunAt-index` | Attempt audit, limit enforcement, wins, delivery, recovery |
 
-`userLotteryPrizeId` is UUID v5 of `lotteryId:userId:dailyWindowStartedAt:dailyAttemptSlot` while an attempt occupies a slot. A released attempt is moved to a UUID v4 row without `dailyAttemptSlot`, preserving audit history while freeing the deterministic slot.
+`userLotteryPrizeId` is UUID v5 of `lotteryId:userId:dailyWindowStartedAt:dailyAttemptSlot` while an attempt occupies a
+slot. A released attempt is moved to a UUID v4 row without `dailyAttemptSlot`, preserving audit history while freeing
+the deterministic slot.
 
 Every win row must snapshot all fulfillment-critical values, including:
 
@@ -168,8 +183,10 @@ Full Zod definitions should remain in the source schema package rather than bein
 ### Capacity and growth limits
 
 - Exact event traffic, customer count, and retention are unknown.
-- `spinMultiplier <= 30` keeps the worst-case release transaction below DynamoDB's 100-item limit (`2n` attempt operations plus up to `n` stock updates).
-- Define retention/archival for attempt history before launch; no TTL should remove unresolved charge or delivery records.
+- `spinMultiplier <= 30` keeps the worst-case release transaction below DynamoDB's 100-item limit (`2n` attempt
+  operations plus up to `n` stock updates).
+- Define retention/archival for attempt history before launch; no TTL should remove unresolved charge or delivery
+  records.
 - Add metrics for DynamoDB consumed capacity, throttles, transaction conflicts, items read/returned, and GSI pagination.
 
 ## 7. Alternatives Considered
@@ -206,19 +223,25 @@ Full Zod definitions should remain in the source schema package rather than bein
 | No valid default prize                  | Reject before reserve/charge and alert                                         | Invariant check and metric                  | Repair event/prize configuration                              |
 | Odds exceed 100%                        | Reject configuration or spin before charge                                     | Validation/alert                            | Correct prize odds/advantages                                 |
 
-All service and repository functions log with the shared logger, include relevant IDs, call `logErrorMessage(error, functionName)` in their catch block, and rethrow. Never log secrets or full customer profiles.
+All service and repository functions log with the shared logger, include relevant IDs, call
+`logErrorMessage(error, functionName)` in their catch block, and rethrow. Never log secrets or full customer profiles.
 
 ## 9. Testing and Rollout
 
-- Unit tests: filter matching; UTC+8 windows; slot selection/reuse; odds and advantages; guaranteed defaults; sold-out redraws; state transitions; merged-update Zod rules.
+- Unit tests: filter matching; UTC+8 windows; slot selection/reuse; odds and advantages; guaranteed defaults; sold-out
+  redraws; state transitions; merged-update Zod rules.
 - Statistical test: seeded 1,000,000-draw run within agreed tolerance; unassigned share always produces a default prize.
-- Integration tests: reserve/charge/confirm, insufficient/release, unknown/manual resolution, lost enqueue/reconciliation, idempotent reward delivery, admin invariants.
+- Integration tests: reserve/charge/confirm, insufficient/release, unknown/manual resolution, lost
+  enqueue/reconciliation, idempotent reward delivery, admin invariants.
 - Concurrency test: parallel spins competing for one stock unit and the final daily/total attempt.
 - Access-pattern test: force more than 1 MB of candidate data and verify complete pagination and limit correctness.
 - Load test: target traffic is unknown; define it before approving production capacity.
-- Deployment sequence: schemas → `admin-lottery` tables/API → seed inactive event/prizes → `client-lottery` → integration/load test → verify alarms → activate event.
-- Rollback: set event `INACTIVE`; stop new spins; keep reconciliation and delivery active until all reserved/charged rows are resolved.
-- Success metrics: spin success/failure by reason, transaction conflicts, `CHARGE_UNKNOWN`, delivery age/failure/DLQ, consumed capacity, items read/returned, and default-prize rate.
+- Deployment sequence: schemas → `admin-lottery` tables/API → seed inactive event/prizes → `client-lottery` →
+  integration/load test → verify alarms → activate event.
+- Rollback: set event `INACTIVE`; stop new spins; keep reconciliation and delivery active until all reserved/charged
+  rows are resolved.
+- Success metrics: spin success/failure by reason, transaction conflicts, `CHARGE_UNKNOWN`, delivery age/failure/DLQ,
+  consumed capacity, items read/returned, and default-prize rate.
 
 ## 10. Delivery Plan
 
@@ -255,11 +278,16 @@ Reviewers complete this section. Any score below 3 requires revision or an expli
 ### Approval blockers
 
 - [ ] Confirm odds, displayed odds, and quantity for all Halloween prizes — Product — due before implementation freeze.
-- [ ] Confirm the default prize and unit economics; align published rules with “every attempt wins” — Product/legal — due before activation.
-- [ ] Identify Motpoints credit API and confirm withdrawal/credit idempotency plus status lookup — Motpoints owner — due before delivery implementation.
-- [ ] Confirm backend enforcement for KYC, age, and MYMOT-only participation — Product/security — due before API completion.
-- [ ] Decide whether terms acceptance needs a persisted per-user/event record — Product/legal — due before schema freeze.
-- [ ] Provide expected/peak traffic, retention, and latency targets — Product/architecture — due before load-test approval.
+- [ ] Confirm the default prize and unit economics; align published rules with “every attempt wins” — Product/legal —
+      due before activation.
+- [ ] Identify Motpoints credit API and confirm withdrawal/credit idempotency plus status lookup — Motpoints owner — due
+      before delivery implementation.
+- [ ] Confirm backend enforcement for KYC, age, and MYMOT-only participation — Product/security — due before API
+      completion.
+- [ ] Decide whether terms acceptance needs a persisted per-user/event record — Product/legal — due before schema
+      freeze.
+- [ ] Provide expected/peak traffic, retention, and latency targets — Product/architecture — due before load-test
+      approval.
 
 ### Non-blocking or scope-dependent
 
