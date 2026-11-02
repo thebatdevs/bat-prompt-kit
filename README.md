@@ -4,10 +4,10 @@
 
 The goal of this project is to help AI coding agents understand a repository before they modify it. Instead of acting
 like a generic AI coding tool, `bat-peasant` gives the agent structured access to project context, engineering
-standards, workflow rules, implementation examples, technical decisions, and maintenance guides.
+standards, workflow rules, implementation examples, and technical documentation.
 
 `bat-peasant` is designed to be language-agnostic. It can be used for TypeScript, Python, or any other codebase as long
-as the repository-specific rules are documented inside the `code/.bat-peasant/` folder.
+as the repository-specific rules are documented inside the `.agents/` folder.
 
 ## Purpose
 
@@ -30,57 +30,49 @@ It should help with tasks such as:
 
 `bat-peasant` does not try to put every rule inside one huge prompt.
 
-Instead, it separates agent memory into focused files and folders.
+Instead, it separates persistent context into focused files and folders.
 
-The `code/AGENTS.md` file acts as the entrypoint. It tells the agent how to use the `code/.bat-peasant/` folder.
+The root `AGENTS.md` file is the activation and routing entry point. Bat-Peasant activates only when a task contains the
+exact marker `##bat-peasant`; tasks without this marker use normal agent behavior.
 
-The `code/.bat-peasant/workflow/` files define task-specific execution flows. Each workflow file is responsible for
-listing which context, standards, examples, docs, prompts, and decisions should be read for that task.
+When activated, the agent reads detailed workflow guidance from `.agents/info.md` and selectively loads the relevant
+context, rules, examples, docs, prompts, and metadata from `.agents/`.
 
 ## Folder Structure
 
 ```txt
-code/
-├── .bat-peasant/
-│   ├── context/ # Project-specific business, domain, and product context
-│   ├── decisions/ # Architecture and technical decisions
-│   ├── docs/ # Internal package, tool, framework, and integration documentation
-│   ├── examples/ # Reference examples of preferred implementation patterns
-│   ├── maintenance/ # Guides for keeping memory files accurate and up to date
-│   ├── metadata/ # Memory-system metadata
-│   ├── prompts/ # Reusable task prompts
-│   ├── standards/ # Coding, naming, project structure, testing, and review standards
-│   ├── testing/ # Test framework setup, test patterns, and test examples
-│   └── workflow/ # Step-by-step workflows for common engineering tasks
-├── .github/
-│   └── copilot-instructions.md
-└── AGENTS.md
-
-docs/
-markdown/
-prompt/
+.agents/
+├── context/    # Business rules, domain flows, and shared behavior
+├── docs/       # Internal libraries, APIs, tools, and technical references
+├── examples/   # Canonical implementation examples
+├── metadata/   # Architecture, project structure, stack, and version
+├── plans/      # Generated implementation plans
+├── prompts/    # Task-specific workflows and prompt templates
+├── rules/      # Coding, layering, language, framework, and testing rules
+└── skills/     # Available agent capabilities and skill metadata
+AGENTS.md          # Activation and routing entry point
 README.md
 ```
 
 ## How It Works
 
-The agent starts from `code/AGENTS.md`.
-
-Then it identifies the task type and reads the matching workflow file from `code/.bat-peasant/workflow/`.
+The agent starts from the root `AGENTS.md`. If the task contains the exact activation marker `##bat-peasant`, it reads
+`.agents/info.md`, identifies the task type, and selectively loads the relevant files from `.agents/`.
 
 For example:
 
 ```txt
-New feature -> code/.bat-peasant/workflow/new-feature.workflow.md
-Bug fix -> code/.bat-peasant/workflow/debug.workflow.md
-Small refactor -> code/.bat-peasant/workflow/local-refactor.worflow.md
-Large refactor -> code/.bat-peasant/workflow/external-refactor.workflow.md
-Testing feature -> code/.bat-peasant/workflow/testing.workflow.md
+Project structure -> .agents/metadata/
+Business behavior -> .agents/context/
+Implementation constraints -> .agents/rules/
+Preferred patterns -> .agents/examples/
+Task workflow -> .agents/prompts/
+Complex-task plan -> .agents/plans/<task-name>.plan.md
 ```
 
-The workflow file then tells the agent which supporting memory files to read before making changes.
+The workflow guidance tells the agent which supporting persistent-context files to read before making changes.
 
-This keeps `code/AGENTS.md` small and reusable while allowing each repository to define its own detailed behavior.
+This keeps `AGENTS.md` small and reusable while allowing each repository to define its own detailed behavior.
 
 ## Memory File Responsibilities
 
@@ -95,18 +87,6 @@ Use this for:
 - Product behavior
 - Important project assumptions
 - Repository-specific behavior
-
-### `decisions/`
-
-Stores architecture and technical decisions.
-
-Use this for:
-
-- Architecture decisions
-- Tradeoff explanations
-- Deprecated patterns
-- Chosen technical direction
-- Reasons behind important implementation choices
 
 ### `docs/`
 
@@ -132,17 +112,6 @@ Use this for:
 - Good test examples
 - Bad patterns to avoid
 
-### `maintanence/`
-
-Stores guides for keeping the memory system accurate.
-
-Use this for:
-
-- Checking whether code follows standards
-- Syncing business logic documentation
-- Updating memory files after code changes
-- Preventing `code/.bat-peasant/` from becoming outdated
-
 ### `prompts/`
 
 Stores reusable prompts for common agent tasks.
@@ -155,7 +124,7 @@ Use this for:
 - Documentation prompts
 - Review prompts
 
-### `standards/`
+### `rules/`
 
 Stores repository-wide engineering standards.
 
@@ -168,41 +137,44 @@ Use this for:
 - Error handling standards
 - Review standards
 
-### `testing/`
+### `metadata/`
 
-Stores testing-specific rules and examples.
-
-Use this for:
-
-- Test framework setup
-- Mocking rules
-- Integration test patterns
-- Unit test patterns
-- Test data conventions
-
-### `workflow/`
-
-Stores task-specific workflows.
+Stores architecture, project structure, stack, and version information.
 
 Use this for:
 
-- New feature workflow
-- Debug workflow
-- Local refactor workflow
-- External refactor workflow
-- Code review workflow
-- Documentation workflow
+- Architecture metadata
+- Repository structure
+- Technology stack
+- Bat-Peasant version information
+
+### `plans/`
+
+Stores generated implementation plans for complex tasks.
+
+Use this for:
+
+- Goals and scope
+- Files to change
+- Decisions and trade-offs
+- Risks and dependencies
+- Execution order
+- Validation considerations
+
+### `skills/`
+
+Stores available agent capabilities and skill metadata.
 
 ## Design Principles
 
 `bat-peasant` follows these principles:
 
-- Keep `code/AGENTS.md` small and language-agnostic.
-- Put task-specific instructions inside workflow files.
-- Put language-specific rules inside standards or docs.
+- Keep `AGENTS.md` small and language-agnostic.
+- Put task-specific instructions inside prompts.
+- Put language-specific rules inside rules or docs.
 - Put implementation style inside examples.
 - Put business behavior inside context.
-- Put architecture reasoning inside decisions.
+- Put architecture and project structure inside metadata.
 - Keep memory files focused and easy to update.
 - Prefer repository-specific knowledge over generic AI assumptions.
 - Make the agent inspect before editing.
@@ -223,34 +195,36 @@ Use this for:
 
 A coding agent using `bat-peasant` should:
 
-- Start from `code/AGENTS.md`
-- Read the relevant workflow file
+- Start from the root `AGENTS.md`
+- Activate only when the task contains the exact marker `##bat-peasant`
+- Read `.agents/info.md` and the relevant prompt files
 - Follow the workflow instructions
 - Inspect existing code before editing
 - Use project examples before inventing new patterns
 - Follow documented standards
 - Respect existing architecture decisions
 - Make the smallest safe change
-- Update `code/.bat-peasant/` memory when future agent behavior would be affected
+- Suggest an update to `.agents/` when future agent behavior would be affected; do not modify it unless the task
+  explicitly includes documentation maintenance
 - Clearly summarize changes, validation, risks, and assumptions
 
 ## Memory Update Rule
 
-When code changes affect future agent behavior, the related `code/.bat-peasant` memory file should be updated.
+When code changes affect future agent behavior, the related `.agents/` persistent-context file should be considered for
+an explicit documentation-maintenance update.
 
 Examples:
 
 ```txt
-Business/domain behavior changed -> code/.bat-peasant/context/
-Architecture decision changed -> code/.bat-peasant/decisions/
-Reusable package behavior changed -> code/.bat-peasant/docs/
-Preferred implementation pattern added -> code/.bat-peasant/examples/
-Repository standard changed -> code/.bat-peasant/standards/
-Testing pattern changed -> code/.bat-peasant/testing/
-Workflow changed -> code/.bat-peasant/workflow/
+Business/domain behavior changed -> .agents/context/
+Architecture or project structure changed -> .agents/metadata/
+Reusable package behavior changed -> .agents/docs/
+Preferred implementation pattern added -> .agents/examples/
+Repository or testing rule changed -> .agents/rules/
+Workflow changed -> .agents/prompts/
 ```
 
-The `code/.bat-peasant` folder should describe the current repository, not an idealized or outdated version of it.
+The `.agents/` folder should describe the current repository, not an idealized or outdated version of it.
 
 ## Goal
 
