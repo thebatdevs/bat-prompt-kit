@@ -2,13 +2,21 @@
 
 Version: 2.2.0
 
-Updated: 2026-10-21
+Updated: 2026-11-03
 
 Applies to backend TypeScript/Node.js monorepos using AWS Lambda, API Gateway, Serverless Framework, and pnpm. DynamoDB
 rules apply only when used. Existing repository configuration and documented exceptions determine actual versions,
 paths, commands, and compatible conventions. Adoption does not authorize unrelated migrations.
 
 MUST = required. SHOULD = default with a justified exception. MAY = optional.
+
+Apply this standard within the scope of the applicable `AGENTS.md` and explicit user instructions. The bundled
+`AGENTS.md` permits creating or adding tests only when explicitly requested by the user; testing and bootstrap
+requirements below follow that policy. Ordinary implementation, bug-fix, refactoring, and verification requests do not
+authorize generating test files, cases, fixtures, mocks, or snapshots. Do not routinely ask to add tests. Run relevant
+existing checks; missing coverage alone does not require test generation or block completion. Repository-specific
+helpers and conventions below apply only when verified in the adopting project; otherwise use existing equivalents or
+implement the smallest required functionality within the task scope.
 
 ## 1. Agent workflow
 
@@ -32,9 +40,9 @@ Maintain a short project profile linked from `AGENTS.md`, containing:
 - Authoritative configuration paths, actual workspace names, exact verification commands and prerequisites.
 - Approved feature/test references and documented exceptions with reason, owner, and review date.
 
-If no profile is linked, inspect relevant existing configuration and documentation. Do not invent missing facts.
-Continue work supported by verified context; clarify consequential gaps before dependent changes. Create or update the
-profile when adoption or context maintenance is in scope.
+If the profile is missing, incomplete, or marked as a template, inspect relevant existing configuration and
+documentation. Do not invent missing facts. Continue work supported by verified context; clarify consequential gaps
+before dependent changes. Create or update the profile when adoption or context maintenance is in scope.
 
 Link existing authoritative files instead of duplicating their contents. Do not infer implemented behavior from plans or
 names. Request acceptance does not imply reservation, execution, or delivery unless explicitly guaranteed.
@@ -47,9 +55,9 @@ names. Request acceptance does not imply reservation, execution, or delivery unl
   boundaries.
 - SHOULD reuse shared schemas, errors, logging, environment access, AWS clients, and integration wrappers.
 - MUST declare workspace dependencies and use public exports. Justify new dependencies; update lockfiles through pnpm.
-- SHOULD enforce mechanical rules with formatter, TypeScript, and ESLint: formatting, imports, unused code, promise
-  handling, and selected JSDoc requirements. Mentioning a tool here does not require installing it during unrelated
-  work.
+- SHOULD enforce mechanical rules with formatter, TypeScript, and the configured linter: formatting, imports, unused
+  code, promise handling, and selected JSDoc requirements. Mentioning a tool here does not require installing it during
+  unrelated work.
 - MUST regenerate generated files through their owning tool; do not edit dependencies, build output, or caches directly.
 
 ## 4. Architecture
@@ -72,7 +80,8 @@ testable and identify environment values required before import.
   `<entity>-update.ts`. Related operations share a module while it remains within the limit; do not automatically create
   one service file per endpoint.
 - MUST reuse the existing HTTP handler factories, request/query parsers, schema exports, DynamoDB utilities,
-  `CustomError`, `logErrorMessage`, naming helpers and environment accessors before adding equivalent functionality.
+  `CustomError`, `logErrorMessage`, naming helpers and environment accessors when present before adding equivalent
+  functionality.
 
 ## 5. How to write functions
 
@@ -88,6 +97,9 @@ testable and identify environment values required before import.
 - MUST keep required environment validation outside business logic. Follow executable formatting configuration.
 
 ### Retrieval naming and query flow
+
+Apply the DynamoDB parser, projection, and repository conventions below only to DynamoDB-backed collection APIs. Verify
+helper signatures and schema-library capabilities against the installed versions before using the examples.
 
 - MUST use `get` for retrieval functions, not `list`. Use `get<Entity>ById`, `get<Entities>ByQuery` and
   `get<Entity>TableDesc` for their respective service operations. Handler names follow the route contract, for example
@@ -105,10 +117,7 @@ testable and identify environment values required before import.
 Illustrative handler call; the surrounding handler owns authentication, permissions and query parsing:
 
 ```ts
-return await getConfigsByQuery(
-  queries,
-  `id, eventName, minDefaultLevel, description, logoImageUrl, status, createdAt, pricePerEntryByMotpoints`,
-);
+return await getEntitiesByQuery(queries, `id, name, status, createdAt`);
 ```
 
 The corresponding service accepts `(query: DynamoQueryRequest, projection?: string)` and forwards both arguments. The
@@ -121,8 +130,8 @@ read-capacity consumption for the same items.
 - MUST wrap every business service function's operation in `try/catch (error: unknown)`, call the shared
   `logErrorMessage(error, '<enclosingFunctionName>')` in the catch, and rethrow the same error with `throw error`. This
   includes retrieval and table-description services. Do not replace the error, return a success fallback, or lose its
-  status/cause. This service-level logging convention was explicitly requested on 2026-10-21 and supersedes the earlier
-  single-logging-owner rule for services.
+  status/cause. Use the adopting project's equivalent logger when `logErrorMessage` is unavailable; document scoped
+  exceptions in the project profile.
 - Other layers SHOULD catch only to translate at an owned boundary, recover, clean up, or log a terminal failure. Reuse
   shared transport error formatting. Nested services, repositories and the HTTP wrapper may log the same error;
   function-name context identifies the propagation path, but repeated entries do not represent distinct incidents.
@@ -191,6 +200,9 @@ export async function validateCreateRequest(request: CreateRequest): Promise<Pay
 
 ### Create, update and default semantics
 
+The schema examples below assume Zod. Use equivalent operations supported by the repository's configured schema library
+and installed version; do not introduce or migrate libraries solely to copy an example.
+
 - MUST derive editable request schemas from canonical stored schemas with `.pick()` or `.omit()` and infer types from
   Zod. Keep IDs, creation audit fields and status server-owned unless the documented operation explicitly permits them.
 - MUST apply documented defaults on create and retain them when parsing older records that omit newly added fields.
@@ -232,7 +244,7 @@ When table-description APIs are requested for an administrative entity, follow t
   `get<Entity>TableDescription`, shared `getTableDescFromDynamo`. Resolve the table name lazily through the existing
   environment accessor, never from a caller-supplied table name.
 - Return the SDK response's `Table` metadata and throw `CustomError` when it is absent, using the documented HTTP status
-  (the current admin-lottery contract uses 502). Do not return fabricated metadata or create/alter tables.
+  recorded in the project profile. Do not return fabricated metadata or create/alter tables.
 - Add scoped `dynamodb:DescribeTable` permission to the execution-role policy and keep the endpoint registry, permission
   documentation and Postman collection consistent.
 
@@ -262,20 +274,21 @@ When table-description APIs are requested for an administrative entity, follow t
   conventions, documented account placeholders and scoped resources/actions. Distinguish runtime execution permissions
   from deployment permissions; editing the files does not apply them to AWS.
 - MUST distinguish table infrastructure ownership from record creation. Grant/create only operations authorized by the
-  feature. For example, admin-lottery provisions lottery tables, but clients create prize records and admin updates must
-  not upsert missing prizes. IAM `UpdateItem` alone does not enforce record existence; use repository conditions.
+  feature. An update-only operation must not upsert missing records. IAM `UpdateItem` alone does not enforce record
+  existence; use repository conditions.
 - MUST keep scaffolding honest: until persistence/business behavior is implemented, use an explicit typed failure such
-  as `CustomError(..., 501)`, not fabricated success. Do not describe planned draw/delivery/eligibility logic as working
-  merely because request validation and persistence exist.
-- Temporary authorization changes MUST be explicitly requested and documented as a scoped exception. The current
-  admin-lottery permission assertions are commented out at the user's request while Cognito authorizers remain enabled;
-  this is not a default for new stacks or permission changes elsewhere.
+  as `CustomError(..., 501)`, not fabricated success. Do not describe planned workflow logic as working merely because
+  request validation and persistence exist.
+- Temporary authorization changes MUST be explicitly requested and documented as a scoped exception. The project profile
+  must record the affected environment, permission checks, reason, owner, and review date. Never infer permission to
+  disable authorization from an example or another project's exception.
 
 ## 9. Verification
 
-- MUST test observable behavior and contracts relevant to the change: happy path plus meaningful failure/boundary cases.
-  Include ownership, conflicts, duplicates, units, and partial recovery when applicable. Bug fixes SHOULD have
-  regression tests.
+- MUST verify observable behavior and contracts relevant to the change using applicable existing checks. When test
+  creation is explicitly requested, cover happy paths plus meaningful failure/boundary cases. Include ownership,
+  conflicts, duplicates, units, and partial recovery when applicable. Bug fixes SHOULD have regression tests when test
+  creation is authorized.
 - Unit tests isolate external effects; integration tests verify actual boundary/storage semantics in designated
   resources. Use deterministic clocks/IDs, synthetic fixtures, cleanup, and appropriate mocks. Avoid tests that only
   mirror implementation.
@@ -284,15 +297,16 @@ When table-description APIs are requested for an administrative entity, follow t
   reason.
 - Record exact commands and working directories in the project profile. Verify manifest package names, scripts, file
   globs, and prerequisites; do not invent commands or assume a root test task exists.
-- Documentation changes need reference/format consistency checks. Code changes need relevant tests and lint/types;
-  shared contracts need consumer compatibility/build checks; persistence needs condition/query verification.
+- Documentation changes need reference/format consistency checks. Code changes need relevant existing tests and
+  lint/types; shared contracts need consumer compatibility/build checks; persistence needs condition/query verification.
 - Never treat a hook passing as evidence for checks it did not run. Report blocked verification accurately.
 
 ## 10. Approved references
 
 The project profile MUST link an accessible reviewed feature or pinned starter and relevant examples of:
 
-- Registration/auth → schema → handler → service → repository/integration → meaningful tests.
+- Registration/auth → schema → handler → service → repository/integration, plus existing tests when available. Missing
+  test examples do not authorize generating tests or block profile completion.
 - Error translation and its logging owner.
 - Conditional persistence/pagination when used.
 
@@ -305,8 +319,11 @@ no usable references; replace them as real approved implementations become avail
 1. Select purpose, invariants, runtime/tools, contracts, auth, datastore, and minimal structure in the project profile.
 2. Use an accessible pinned starter or scaffold only required packages/layers. Do not inherit another project's
    production targets.
-3. Configure strict types, formatter/lint, test runner, environment validation, and isolated development resources.
-4. Build one named vertical slice with acceptance criteria, meaningful success/failure tests, and auth when required.
+3. Configure strict types, formatter/lint, environment validation, and isolated development resources. Configure new
+   test tooling only when testing setup is explicitly requested; preserve existing test tooling.
+4. Build one named vertical slice with acceptance criteria and auth when required. Add meaningful success/failure tests
+   when explicitly requested; otherwise run existing checks and report material verification limits without blocking
+   solely on missing coverage.
 5. Verify install, tests, types, and build; record actual commands/examples and link the adopted profile/standard from
    `AGENTS.md`.
 

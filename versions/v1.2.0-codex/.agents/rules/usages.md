@@ -7,6 +7,13 @@ pnpm. DynamoDB rules apply only when DynamoDB is used.
 The standard defines engineering behavior. A project profile supplies the repository-specific facts needed to apply it:
 business rules, file paths, configuration, commands, approved examples, and exceptions.
 
+## Test generation policy
+
+Generate tests only when the user explicitly asks to write or add tests. Ordinary development, bug-fix, refactoring, and
+verification prompts do not authorize test files, cases, fixtures, mocks, or snapshots. Do not routinely ask whether to
+add tests. Run relevant existing checks and report material verification limits; missing coverage alone does not block
+completion. Do not install or scaffold test tooling solely for unrequested tests.
+
 ## 1. Adopt it in an existing repository
 
 1. Copy the standard into a maintained documentation location in the target repository. The example layout below is
@@ -129,8 +136,9 @@ Follow verified repository patterns and preserve unrelated work. Run relevant ch
 Report the result, checks actually run, material assumptions, and any blocked verification.
 ```
 
-Review the result against the affected contracts and invariants. Require relevant observable tests and honest reporting
-of blocked checks. A passing hook proves only the checks that hook actually ran.
+Review the result against the affected contracts and invariants. Run relevant existing checks and report verification
+limits honestly. Generate tests only when explicitly requested. A passing hook proves only the checks that hook actually
+ran.
 
 If an existing project has no linked profile, the standard permits progress using verified context. Clarify missing
 business, security, or data-integrity decisions before dependent changes; do not invent them or automatically expand a
@@ -141,8 +149,10 @@ small task into full adoption work.
 1. Record purpose, invariants, selected tools, contracts, authentication, datastore, and minimal structure in the
    profile.
 2. Use an accessible pinned starter or scaffold only the packages and layers needed. Do not inherit production targets.
-3. Configure strict TypeScript, formatting/linting, tests, environment validation, and isolated development resources.
-4. Build one named vertical slice with observable acceptance criteria and meaningful success/failure tests.
+3. Configure strict TypeScript, formatting/linting, environment validation, and isolated development resources.
+   Configure new test tooling only when testing setup is explicitly requested; preserve existing test tooling.
+4. Build one named vertical slice with observable acceptance criteria. Generate success/failure tests only when
+   explicitly requested; otherwise run applicable existing checks.
 5. Verify installation, tests, types, and build using actual project commands. Link the standard and completed profile
    from `AGENTS.md`, and record approved paths and symbols as examples.
 
