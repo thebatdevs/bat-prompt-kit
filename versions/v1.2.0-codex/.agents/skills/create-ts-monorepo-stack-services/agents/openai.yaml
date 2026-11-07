@@ -1,0 +1,5 @@
+interface:
+  display_name: 'Create TS Monorepo Stack Services'
+  short_description: 'Generate focused entity services from repositories'
+  default_prompt:
+    'Use $create-ts-monorepo-stack-services to generate entity services for the target stack and repository I provide.'
