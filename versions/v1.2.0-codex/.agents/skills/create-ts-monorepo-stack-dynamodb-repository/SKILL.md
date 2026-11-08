@@ -2,14 +2,19 @@
 name: create-ts-monorepo-stack-dynamodb-repository
 description:
   Create or extend a single typed DynamoDB entity repository from a user-provided schema path in this monorepo. Requires
-  a complete user-defined entity schema and its Prt, Opt, and OptPrt type exports; follows the CustomConfig repository
-  pattern without generating schemas, services, or API routes.
+  a complete user-defined entity schema and its Prt, Opt, and OptPrt type exports; uses the current CustomConfig
+  repository as the implementation reference, including typed projections and shared all-page Query pagination. Does not
+  generate schemas, services, or API routes.
 ---
 
 # Create a TypeScript monorepo stack DynamoDB repository
 
 Create `<target-stack>/src/repository/<kebab-case-entity>.repository.ts` using the provided canonical schema and the
-public `@motforex-monorepo-packages/aws-dynamodb` package. This skill generates repository code, not a new domain model.
+public `@motforex-monorepo-packages/aws-dynamodb` package. Use the current
+`stacks/admin-finance-config/src/repository/custom-config.repository.ts` as the implementation reference, reading it at
+generation time rather than relying on a remembered version. Produce an equivalent repository for the selected entity's
+verified schema and access patterns, not a literal copy of CustomConfig business rules. This skill generates repository
+code, not a new domain model.
 
 ## Inputs and prerequisites
 
@@ -39,7 +44,8 @@ work.
 Use these repository-relative sources; resolve them from the repository root:
 
 - `stacks/admin-finance-config/src/repository/custom-config.repository.ts`: reference for file organization, typed
-  projections, conditional create/update, partial update results, and optional deletion.
+  projections, single-page and all-page Query reads, bounded Scan reads, conditional create/update, partial update
+  results, and optional deletion.
 - `packages/dynamodb/src/commands.ts` and `packages/dynamodb/src/index.ts`: installed command signatures and public
   exports. The directory is `packages/dynamodb`; the package import is `@motforex-monorepo-packages/aws-dynamodb`.
 - The selected stack's `serverless.ts`, constants, manifests, existing repository consumers, and verification scripts:
@@ -64,8 +70,10 @@ file:
 
 Implement only applicable operations. A request limited to reads does not authorize writes. For an otherwise
 unrestricted request to create a repository, include detail, create, and update operations when their prerequisites are
-established; include collection and table-description reads as supported by the verified requirements and table access
-patterns. Delete, batch, transaction, and automatically paginated operations are not mandatory boilerplate.
+established; include detail, single-page Query, all-page Query, and table-description read capabilities analogous to
+CustomConfig where supported. Include bounded Scan only for established access patterns without a usable Query key.
+Delete remains optional according to the entity contract; batch and transaction operations are not default boilerplate.
+An explicit narrower request takes precedence. Identify unsupported operations instead of fabricating prerequisites.
 
 Use named exports and entity-specific function names, preserving existing public names when extending a repository. Use
 `get` naming for new retrieval functions; retain established query/scan names when maintaining existing consumers. Do
@@ -112,9 +120,19 @@ existing CustomConfig exception is not blanket approval for unrelated changes.
 - Query only real partition/index key patterns. Never invent indexes or use Query for arbitrary non-key filtering. For
   tables without a collection query pattern, justify one bounded Scan and preserve its continuation cursor. Adapt limits
   to the verified contract; the CustomConfig reference uses default 20 and range 1–100.
-- Do not automatically fetch every page. Empty filtered pages can still have a continuation key. Preserve this
-  distinction. Table-description functions retain the existing SDK administrative response convention unless the task
-  requires another.
+- Keep single-page reads separate from all-page reads. Single-page reads retain their SDK envelope and cursor; empty
+  filtered pages can still have a continuation key. All-page Query reads return a parsed selected-record array, accept
+  required `DynamoQueryOptions` key conditions, and delegate directly to `queryAllRecordsFromDynamo` from the public
+  DynamoDB package. Do not implement another pagination loop or substitute Scan for a query-all function. Reject
+  `select: 'COUNT'` for array-returning record reads. Document memory accumulation and no snapshot guarantee.
+- Preserve supported query options: `indexName`, `partitionKeys`, `sortKeys`, filters, ordering, limit and starting
+  cursor. Do not narrow the contract to one partition/sort attribute. For configured multi-attribute GSIs, use all
+  partition attributes with equality and sort conditions in schema order without gaps, with a range condition last.
+  Inspect the installed builder's types/validation; never invent index names or provision an index to make generated
+  code work.
+- Table-description functions retain the SDK administrative response convention unless the task requires another. GSI
+  projections must supply every field required by the selected response schema; never validate a partial index row as a
+  complete entity or silently fetch missing fields from the base table.
 
 ### Creates and updates
 
@@ -140,9 +158,11 @@ existing CustomConfig exception is not blanket approval for unrelated changes.
 ## Verification and completion
 
 Inspect the final repository and its callers for import/path, runtime-schema/type, and documentation consistency. Keep
-all type declarations at the top and utilities at the bottom. Update moved imports and affected reference links.
-Document material return-contract changes in existing stack documentation rather than generating unrelated
-documentation.
+all type declarations at the top and utilities at the bottom. Compare the generated operation inventory with
+CustomConfig and account for omissions using the request, schema, or access-pattern evidence. Verify that query-all
+calls the shared Query helper, bounded collection reads do not exhaust pages, and projections match result schemas.
+Update moved imports and affected reference links. Document material return-contract changes in existing stack
+documentation rather than generating unrelated documentation.
 
 Run the selected stack's declared type-check and targeted lint/format checks, relevant existing tests, and
 `git diff --check`. Inspect actual scripts first. Do not generate test files, test cases, fixtures, mocks, snapshots, or
