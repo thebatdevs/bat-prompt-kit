@@ -2,7 +2,7 @@
 name: create-ts-monorepo-stack-services
 description:
   Create or extend entity service functions from an existing repository and verified business rules in this TypeScript
-  monorepo. Generates operation-specific get, create, and update modules under the selected stack's src/service/entity
+  monorepo. Generates operation-specific get, create, and update modules under the selected stack's src/services/entity
   folder, with files capped at 250 lines, one try/catch per service function, and engineering-standard JSDoc. Does not
   generate repositories or API routes.
 ---
@@ -43,16 +43,15 @@ dependent operation; continue independent operations supported by verified requi
 Use this user-selected layout, substituting the actual stack and kebab-case entity name:
 
 ```text
-stacks/<target-stack>/src/service/<entity>/
+stacks/<target-stack>/src/services/<entity>/
   <entity>-get.ts
   <entity>-create.ts
   <entity>-update.ts
 ```
 
-For example, `stacks/admin-finance-config/src/service/payment-method/payment-method-get.ts`. The folder is **service**,
-singular. This explicit convention overrides the engineering standard's `src/services/` example for generated services.
-Record the scoped path exception in the project profile when generating services; do not migrate unrelated existing
-directories or silently change the standard.
+For example, `stacks/admin-finance-config/src/services/payment-method/payment-method-get.ts`. The folder is
+**services**, plural, matching the engineering standard. Keep entity operation modules inside that folder; do not create
+a parallel `src/service/` directory or migrate unrelated entities.
 
 - Create only requested operation groups; do not scaffold empty modules. A general service-generation request covers
   get/create/update only when the repository and business requirements establish their behavior.
