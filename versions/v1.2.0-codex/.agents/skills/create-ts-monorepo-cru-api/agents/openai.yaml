@@ -1,0 +1,6 @@
+interface:
+  display_name: 'Simple TypeScript CRU API'
+  short_description: 'Generate entity Create, Read, and Update API handlers'
+  default_prompt:
+    'Use $create-ts-monorepo-cru-api to create a simple CRU API for the selected stack and entity using its existing
+    services.'
