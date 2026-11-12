@@ -2,6 +2,8 @@
 
 > `bat-peasant` is a personalized coding-agent memory system packaged as a reusable project template.
 
+This README documents the Bat-Peasant `v1.1.0-codex` persistent-context and activation contract.
+
 The goal of this project is to help AI coding agents understand a repository before they modify it. Instead of acting
 like a generic AI coding tool, `bat-peasant` gives the agent structured access to project context, engineering
 standards, workflow rules, implementation examples, and technical documentation.
