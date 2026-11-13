@@ -1,5 +1,0 @@
-interface:
-  display_name: 'Create TS Monorepo Stack DynamoDB Repository'
-  short_description: 'Create typed repositories from user-owned schemas'
-  default_prompt:
-    'Use $create-ts-monorepo-stack-dynamodb-repository to create an entity repository from the schema path I provide.'

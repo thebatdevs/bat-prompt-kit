@@ -1,5 +1,0 @@
-interface:
-  display_name: 'Create TS Monorepo Entity Utility Types'
-  short_description: 'Derive shared utility schemas for existing entities'
-  default_prompt:
-    'Use $create-ts-monorepo-entity-utility-types to create shared utility types beside the entity schema I provide.'

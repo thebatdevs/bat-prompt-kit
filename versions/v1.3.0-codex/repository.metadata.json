@@ -1,0 +1,9 @@
+{
+  "name": "v1.3.0-codex",
+  "requiredPackages": {},
+  "requiredPaths": {
+    "dynamodb": null,
+    "libs": null,
+    "schema": null
+  }
+}
