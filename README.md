@@ -34,6 +34,8 @@ It should help with tasks such as:
 
 Instead, it separates persistent context into focused files and folders.
 
+The `.agents/` directory is the only canonical persistent-context directory for Bat-Peasant `v1.1.0-codex`.
+
 The root `AGENTS.md` file is the activation and routing entry point. Bat-Peasant activates only when a task contains the
 exact marker `##bat-peasant`; tasks without this marker use normal agent behavior.
 
