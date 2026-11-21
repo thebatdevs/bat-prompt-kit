@@ -1,9 +1,16 @@
 {
   "name": "v1.3.0-codex",
-  "requiredPackages": {},
-  "requiredPaths": {
-    "dynamodb": null,
-    "libs": null,
-    "schema": null
+  "requiredPackagesPaths": {
+    "axios": "./",
+    "dynamodb": "./",
+    "lambda": "./",
+    "libs": "./",
+    "s3": "./",
+    "schemas": "./",
+    "serverless-config": "./",
+    "sqs": "./",
+    "ssm": "./",
+    "ts-config": "./",
+    "vitest-config": "./"
   }
 }
