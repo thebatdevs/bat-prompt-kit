@@ -1,0 +1,6 @@
+interface:
+  display_name: 'Audit Agent Skill'
+  short_description: 'Rate skill accuracy, independence, and token efficiency'
+  default_prompt:
+    'Use $audit-agent-skill to review <path-to-SKILL.md> for accuracy, repository independence, and token efficiency,
+    with evidence and prioritized improvements.'

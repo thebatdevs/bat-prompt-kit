@@ -1,0 +1,3 @@
+- Use $generate-zod-entity-utilities
+- schemaPath: src/product.types.ts
+- schemaName: productSch
