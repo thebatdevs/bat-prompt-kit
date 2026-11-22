@@ -1,0 +1,6 @@
+interface:
+  display_name: 'Refresh Monorepo Metadata'
+  short_description: 'Map workspace packages, capabilities, and commands'
+  default_prompt:
+    'Use $refresh-monorepo-metadata to inspect the current TypeScript serverless monorepo and refresh its
+    monorepo.metadata.json from verified local evidence.'
