@@ -1,0 +1,6 @@
+interface:
+  display_name: 'Create TypeScript DynamoDB Client'
+  short_description: 'Generate a DynamoDB client and validated commands'
+  default_prompt:
+    'Use $create-ts-monorepo-dynamo-client to generate a DynamoDB client and validated commands in this project,
+    checking dependencies and using the default destination unless I provide an outputPath.'
