@@ -4,6 +4,58 @@
 
 This README documents the Bat-Peasant `v1.1.0-codex` persistent-context and activation contract.
 
+## Local skill-testing apps
+
+This repository also contains a pnpm monorepo with application code under `apps/*`:
+
+```txt
+apps/
+├── api/                  # TypeScript Node HTTP API: routes → task service → in-memory repository
+├── web/                  # TypeScript + Vite task tracker, with an /api development proxy
+└── serverless-example/   # Serverless v4 + AWS Lambda, API Gateway, and DynamoDB
+```
+
+The root owns workspace configuration and development tools. Each app owns its source, tests, scripts, and TypeScript
+configuration. The versioned agent templates and reference documents remain in their existing locations.
+
+Requires Node.js 24.11+ in the 24.x line, or Node.js 26+, and pnpm 12.14.0 (the version in `packageManager`).
+
+```sh
+pnpm install
+pnpm dev       # Web: http://127.0.0.1:5173 · API: http://127.0.0.1:3001
+pnpm dev:serverless # Serverless Offline: http://127.0.0.1:3003/dev/v1/health
+pnpm check     # Formatting, lint, and type checks for the apps and root configuration
+pnpm test      # Tests across all apps, including mocked AWS tests
+pnpm build     # Build all apps into their own dist/ directories
+```
+
+Run one app with `pnpm --filter @bat-peasant/api dev` or `pnpm --filter @bat-peasant/web dev`. After building,
+`pnpm --filter @bat-peasant/api start` runs the compiled API. The web build is static; serve it behind a reverse proxy
+that forwards `/api` to the API. The development proxy targets port 3001; update `apps/web/vite.config.ts` if you change
+the API's `PORT`.
+
+[`apps/serverless-example`](apps/serverless-example/README.md) adapts the linked TypeScript Serverless template and
+includes example item APIs, DynamoDB resources, and reusable integration utilities. Its build and tests run without AWS
+credentials. Run it separately with `pnpm dev:serverless`; data endpoints need the stage's DynamoDB table and AWS
+credentials. See the app README for configuration, packaging, and deployment commands.
+
+The sample supports creating tasks, listing or filtering by status, cycling through `todo` → `in-progress` → `done` →
+`todo`, and deleting tasks. Titles are trimmed and must contain 1–120 characters. Tasks are held in memory and reset
+when the API restarts. This is a local sandbox without authentication or external services.
+
+| Method | Endpoint         | Behavior                                      |
+| ------ | ---------------- | --------------------------------------------- |
+| GET    | `/api/health`    | Health check                                  |
+| GET    | `/api/tasks`     | List tasks; optional `?status=todo` filter    |
+| POST   | `/api/tasks`     | Create with JSON `{ "title": "Try a skill" }` |
+| GET    | `/api/tasks/:id` | Retrieve a task                               |
+| PATCH  | `/api/tasks/:id` | Update with JSON `{ "status": "done" }`       |
+| DELETE | `/api/tasks/:id` | Delete a task                                 |
+
+For skill experiments, try adding task descriptions, implementing title updates, adding pagination, replacing the
+in-memory repository with persistent storage, or generating business-context documentation from the implemented code.
+Agent templates are not automatically activated by these apps; use the existing activation instructions below.
+
 The goal of this project is to help AI coding agents understand a repository before they modify it. Instead of acting
 like a generic AI coding tool, `bat-peasant` gives the agent structured access to project context, engineering
 standards, workflow rules, implementation examples, and technical documentation.

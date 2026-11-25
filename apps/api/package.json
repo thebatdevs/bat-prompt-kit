@@ -1,0 +1,12 @@
+{
+  "name": "@bat-peasant/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/server.ts",
+    "build": "vp pack src/server.ts --platform node --target node24 --out-dir dist",
+    "start": "node dist/server.mjs",
+    "test": "vp test"
+  }
+}

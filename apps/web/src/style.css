@@ -1,0 +1,151 @@
+:root {
+  font-family: system-ui, sans-serif;
+  color: #e9edf5;
+  background: #11151e;
+  color-scheme: dark;
+  font-synthesis: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+main {
+  max-width: 820px;
+  margin: 72px auto;
+  padding: 0 24px;
+}
+h1 {
+  font-size: clamp(2.5rem, 8vw, 4rem);
+  letter-spacing: -0.05em;
+  margin: 12px 0;
+}
+p,
+footer {
+  color: #aeb9cd;
+  line-height: 1.6;
+}
+.eyebrow {
+  color: #a6e1ad;
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+}
+form {
+  margin-top: 36px;
+}
+label {
+  display: block;
+  font-size: 0.875rem;
+}
+.input-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+input,
+select,
+button {
+  font: inherit;
+  border: 1px solid #394354;
+  border-radius: 8px;
+  padding: 12px 16px;
+}
+input,
+select {
+  background: #1c2330;
+  color: inherit;
+}
+input {
+  flex: 1;
+  min-width: 0;
+}
+button {
+  cursor: pointer;
+  background: #a6e1ad;
+  color: #17241a;
+  font-weight: 600;
+}
+button:hover {
+  filter: brightness(1.12);
+}
+:focus-visible {
+  outline: 2px solid #a6e1ad;
+  outline-offset: 3px;
+}
+.toolbar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin: 32px 0 16px;
+}
+#count {
+  color: #aeb9cd;
+  margin-left: auto;
+  font-size: 0.875rem;
+}
+ul {
+  list-style: none;
+  padding: 0;
+}
+li {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  border: 1px solid #30394a;
+  background: #19202c;
+  padding: 16px;
+  border-radius: 10px;
+  margin: 12px 0;
+}
+li > span {
+  flex: 1;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.status,
+.remove {
+  font-size: 0.75rem;
+  padding: 8px 10px;
+  white-space: nowrap;
+}
+.status {
+  background: #303c51;
+  color: #d5dfef;
+}
+.in-progress {
+  background: #483e23;
+  color: #f4d58d;
+}
+.done {
+  background: #24402f;
+  color: #a6e1ad;
+}
+.remove {
+  background: transparent;
+  color: #f3b3b3;
+}
+.completed {
+  text-decoration: line-through;
+  color: #aeb9cd;
+}
+#error {
+  color: #ffb5b5;
+}
+footer {
+  margin-top: 40px;
+  font-size: 0.75rem;
+}
+@media (max-width: 520px) {
+  main {
+    margin-top: 40px;
+    padding: 0 16px;
+  }
+  li {
+    flex-wrap: wrap;
+  }
+  li > span {
+    flex-basis: 100%;
+  }
+}

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bat-Peasant Task Lab</title>
+  </head>
+  <body>
+    <main>
+      <p class="eyebrow">BAT-PEASANT / AGENT PLAYGROUND</p>
+      <h1>Task Lab</h1>
+      <p>A small codebase for trying out your agent skills. Make something work a little better.</p>
+      <form id="create-task">
+        <label for="title">New task</label>
+        <div class="input-row">
+          <input id="title" name="title" required maxlength="120" placeholder="What should we build next?" />
+          <button type="submit">Add task</button>
+        </div>
+      </form>
+      <div class="toolbar">
+        <label for="status">Show</label>
+        <select id="status">
+          <option value="">All tasks</option>
+          <option value="todo">To do</option>
+          <option value="in-progress">In progress</option>
+          <option value="done">Done</option>
+        </select>
+        <span id="count" aria-live="polite"></span>
+      </div>
+      <p id="error" role="alert" hidden></p>
+      <ul id="tasks" aria-label="Tasks"></ul>
+      <p id="empty" hidden>No tasks here yet. Add one above to get started.</p>
+      <footer>Local sandbox · Tasks reset when the API restarts.</footer>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

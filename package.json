@@ -1,9 +1,14 @@
 {
   "name": "the-bat-peasant",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "private": true,
+  "description": "Bat-Peasant agent templates and an apps-only skill-testing monorepo",
   "scripts": {
+    "dev": "pnpm --parallel --filter './apps/*' --filter '!@bat-peasant/serverless-example' run dev",
+    "dev:serverless": "pnpm --filter @bat-peasant/serverless-example dev",
+    "build": "pnpm --filter './apps/*' run build",
+    "check": "vp check apps package.json pnpm-workspace.yaml vite.config.ts tsconfig.json",
+    "test": "pnpm --filter './apps/*' run test",
     "format": "vp fmt .",
     "prepare": "vp config"
   },
@@ -19,7 +24,12 @@
   },
   "packageManager": "pnpm@12.14.0",
   "type": "module",
+  "engines": {
+    "node": "^24.11.0 || >=26.0.0"
+  },
   "devDependencies": {
+    "@types/node": "^24.19.2",
+    "typescript": "^5.9.3",
     "vite-plus": "catalog:"
   }
 }

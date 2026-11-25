@@ -1,0 +1,40 @@
+import type { APIGatewayProxyResult as ApiFuncRes } from 'aws-lambda';
+import { LbdFuncResponse } from '../../types';
+
+/**
+ * Formats a standard Lambda function response.
+ *
+ * @param response - The response object to be returned
+ * @param statusCode - The HTTP status code (default is 200)
+ * @param other - Additional properties to include in the response
+ * @returns - The formatted Lambda function response
+ */
+export function formatResponse(response: object, statusCode: number = 200, other: object = {}): LbdFuncResponse {
+  return {
+    statusCode,
+    body: JSON.stringify(response),
+    ...other,
+  };
+}
+
+/**
+ * Formats an API Gateway Lambda function response.
+ *
+ * @param response - The response object to be returned
+ * @param statusCode - The HTTP status code (default is 200)
+ * @param other - Additional properties to include in the response
+ * @returns The formatted API Gateway response
+ */
+export function formatApiResponse(response: object, statusCode: number = 200, other: object = {}): ApiFuncRes {
+  return {
+    statusCode,
+    body: JSON.stringify(response),
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+      'Access-Control-Allow-Headers': '*',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'OPTIONS,POST,GET,PUT,DELETE',
+    },
+    ...other,
+  };
+}

@@ -1,0 +1,40 @@
+{
+  "name": "@bat-peasant/serverless-example",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Serverless TypeScript example adapted from thedashpuntsag/typescript-serverless-template",
+  "license": "ISC",
+  "scripts": {
+    "dev": "serverless offline start --reloadHandler",
+    "offline": "serverless offline start --reloadHandler",
+    "build": "tsc --noEmit && vp pack src/functions/api/example/handler.ts --platform node --target node24 --out-dir dist",
+    "package": "serverless package",
+    "deploy": "serverless deploy",
+    "type-check": "tsc --noEmit",
+    "test": "vp test",
+    "test:watch": "vp test watch"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.1030.0",
+    "@aws-sdk/client-lambda": "^3.1030.0",
+    "@aws-sdk/client-ssm": "^3.1030.0",
+    "@aws-sdk/lib-dynamodb": "^3.1030.0",
+    "@middy/core": "^4.7.0",
+    "@middy/http-json-body-parser": "^4.7.0",
+    "axios": "^1.15.0",
+    "dotenv": "^17.4.2",
+    "dynamo-command-builder": "^0.1.7",
+    "jsonwebtoken": "^9.0.3",
+    "winston": "^3.19.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@serverless/typescript": "^4.30.0",
+    "@types/aws-lambda": "^8.10.161",
+    "@types/jsonwebtoken": "^9.0.10",
+    "serverless": "^4.34.0",
+    "serverless-offline": "^14.5.0",
+    "serverless-prune-plugin": "^2.1.0"
+  }
+}
